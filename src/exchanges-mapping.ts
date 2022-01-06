@@ -1,0 +1,320 @@
+import {
+  Synthetix,
+  SynthExchange as SynthExchangeEvent,
+  ExchangeReclaim as ExchangeReclaimEvent,
+  ExchangeRebate as ExchangeRebateEvent,
+} from '../generated/Synthetix/Synthetix';
+import { AddressResolver } from '../generated/Synthetix/AddressResolver';
+import { ExchangeRates } from '../generated/Synthetix/ExchangeRates';
+import { Synthetix32 } from '../generated/Synthetix/Synthetix32';
+import { Synthetix4 } from '../generated/Synthetix/Synthetix4';
+
+import {
+  Total,
+  DailyTotal,
+  FifteenMinuteTotal,
+  SynthExchange,
+  Exchanger,
+  DailyExchanger,
+  FifteenMinuteExchanger,
+  ExchangeReclaim,
+  ExchangeRebate,
+  PostArchernarTotal,
+  PostArchernarExchanger,
+} from '../generated/schema';
+
+import { BigInt, Address } from '@graphprotocol/graph-ts';
+
+import { exchangesToIgnore } from './exchangesToIgnore';
+
+import { sUSD32, sUSD4, strToBytes } from './common';
+
+let v219 = BigInt.fromI32(9518914); // Archernar v2.19.x Feb 20, 2020
+
+let exchangeRatesAsBytes = strToBytes('ExchangeRates', 32);
+
+function getExchangeRates(address: Address): ExchangeRates {
+  let synthetix = Synthetix.bind(address);
+
+  let resolverTry = synthetix.try_resolver();
+
+  if (!resolverTry.reverted) {
+    let resolver = AddressResolver.bind(resolverTry.value);
+    let exRatesAddressTry = resolver.try_getAddress(exchangeRatesAsBytes);
+
+    if (!exRatesAddressTry.reverted) {
+      return ExchangeRates.bind(exRatesAddressTry.value);
+    }
+  }
+
+  return null;
+}
+
+function handleSynthExchange(event: SynthExchangeEvent, useBytes32: boolean): void {
+  if (exchangesToIgnore.indexOf(event.transaction.hash.toHex()) >= 0) {
+    return;
+  }
+
+  let account = event.transaction.from;
+  let fromAmountInUSD = BigInt.fromI32(0);
+  let toAmountInUSD = BigInt.fromI32(0);
+  let feesInUSD = BigInt.fromI32(0);
+
+  if (event.block.number > v219) {
+    let exRates = getExchangeRates(event.address);
+
+    if (exRates != null) {
+      let effectiveValueTryFrom = exRates.try_effectiveValue(
+        event.params.fromCurrencyKey,
+        event.params.fromAmount,
+        sUSD32,
+      );
+
+      if (!effectiveValueTryFrom.reverted) {
+        fromAmountInUSD = effectiveValueTryFrom.value;
+      }
+
+      let effectiveValueTryTo = exRates.try_effectiveValue(event.params.toCurrencyKey, event.params.toAmount, sUSD32);
+
+      if (!effectiveValueTryTo.reverted) {
+        toAmountInUSD = effectiveValueTryTo.value;
+      }
+    }
+  } else {
+    if (useBytes32) {
+      let synthetix = Synthetix32.bind(event.address);
+
+      let effectiveValueTry = synthetix.try_effectiveValue(
+        event.params.fromCurrencyKey,
+        event.params.fromAmount,
+        sUSD32,
+      );
+      if (!effectiveValueTry.reverted) {
+        fromAmountInUSD = effectiveValueTry.value;
+        toAmountInUSD = synthetix.effectiveValue(event.params.toCurrencyKey, event.params.toAmount, sUSD32);
+      }
+    } else {
+      let synthetix = Synthetix4.bind(event.address);
+
+      let effectiveValueTry = synthetix.try_effectiveValue(
+        event.params.fromCurrencyKey,
+        event.params.fromAmount,
+        sUSD4,
+      );
+      if (!effectiveValueTry.reverted) {
+        fromAmountInUSD = effectiveValueTry.value;
+        toAmountInUSD = synthetix.effectiveValue(event.params.toCurrencyKey, event.params.toAmount, sUSD4);
+      }
+    }
+  }
+  feesInUSD = fromAmountInUSD.minus(toAmountInUSD);
+
+  let entity = new SynthExchange(event.transaction.hash.toHex() + '-' + event.logIndex.toString());
+  entity.account = event.params.account;
+  entity.from = account;
+  entity.fromCurrencyKey = event.params.fromCurrencyKey;
+  entity.fromAmount = event.params.fromAmount;
+  entity.fromAmountInUSD = fromAmountInUSD;
+  entity.toCurrencyKey = event.params.toCurrencyKey;
+  entity.toAmount = event.params.toAmount;
+  entity.toAmountInUSD = toAmountInUSD;
+  entity.toAddress = event.params.toAddress;
+  entity.feesInUSD = feesInUSD;
+  entity.timestamp = event.block.timestamp;
+  entity.block = event.block.number;
+  entity.gasPrice = event.transaction.gasPrice;
+  entity.network = 'mainnet';
+  entity.save();
+
+  let timestamp = event.block.timestamp.toI32();
+
+  let dayID = timestamp / 86400;
+  let fifteenMinuteID = timestamp / 900;
+
+  let postArchernarTotal = PostArchernarTotal.load('mainnet');
+  let total = Total.load('mainnet');
+  let dailyTotal = DailyTotal.load(dayID.toString());
+  let fifteenMinuteTotal = FifteenMinuteTotal.load(fifteenMinuteID.toString());
+
+  if (total == null) {
+    total = loadTotal();
+  }
+
+  if (postArchernarTotal == null && v219 < event.block.number) {
+    postArchernarTotal = loadPostArchernarTotal();
+  }
+
+  if (dailyTotal == null) {
+    dailyTotal = loadDailyTotal(dayID.toString());
+  }
+
+  if (fifteenMinuteTotal == null) {
+    fifteenMinuteTotal = loadFifteenMinuteTotal(fifteenMinuteID.toString());
+  }
+
+  let existingPostArchernarExchanger = PostArchernarExchanger.load(account.toHex());
+  let existingExchanger = Exchanger.load(account.toHex());
+  let existingDailyExchanger = DailyExchanger.load(dayID.toString() + '-' + account.toHex());
+  let existingFifteenMinuteExchanger = FifteenMinuteExchanger.load(fifteenMinuteID.toString() + '-' + account.toHex());
+
+  if (existingExchanger == null) {
+    total.exchangers = total.exchangers.plus(BigInt.fromI32(1));
+    let exchanger = new Exchanger(account.toHex());
+    exchanger.save();
+  }
+
+  if (existingPostArchernarExchanger == null && v219 < event.block.number) {
+    postArchernarTotal.exchangers = postArchernarTotal.exchangers.plus(BigInt.fromI32(1));
+    let postArchernarExchanger = new PostArchernarExchanger(account.toHex());
+    postArchernarExchanger.save();
+  }
+
+  if (existingDailyExchanger == null) {
+    dailyTotal.exchangers = dailyTotal.exchangers.plus(BigInt.fromI32(1));
+    let dailyExchanger = new DailyExchanger(dayID.toString() + '-' + account.toHex());
+    dailyExchanger.save();
+  }
+
+  if (existingFifteenMinuteExchanger == null) {
+    fifteenMinuteTotal.exchangers = fifteenMinuteTotal.exchangers.plus(BigInt.fromI32(1));
+    let fifteenMinuteExchanger = new FifteenMinuteExchanger(fifteenMinuteID.toString() + '-' + account.toHex());
+    fifteenMinuteExchanger.save();
+  }
+
+  if (v219 < event.block.number) {
+    postArchernarTotal.trades = postArchernarTotal.trades.plus(BigInt.fromI32(1));
+  }
+
+  total.trades = total.trades.plus(BigInt.fromI32(1));
+  dailyTotal.trades = dailyTotal.trades.plus(BigInt.fromI32(1));
+  fifteenMinuteTotal.trades = fifteenMinuteTotal.trades.plus(BigInt.fromI32(1));
+
+  if (fromAmountInUSD != null && feesInUSD != null) {
+    if (v219 < event.block.number) {
+      postArchernarTotal = addPostArchernarTotalFeesAndVolume(
+        postArchernarTotal as PostArchernarTotal,
+        fromAmountInUSD,
+        feesInUSD,
+      );
+    }
+    total = addTotalFeesAndVolume(total as Total, fromAmountInUSD, feesInUSD);
+    dailyTotal = addDailyTotalFeesAndVolume(dailyTotal as DailyTotal, fromAmountInUSD, feesInUSD);
+    fifteenMinuteTotal = addFifteenMinuteTotalFeesAndVolume(
+      fifteenMinuteTotal as FifteenMinuteTotal,
+      fromAmountInUSD,
+      feesInUSD,
+    );
+  }
+  if (v219 < event.block.number) {
+    postArchernarTotal.save();
+  }
+  total.save();
+  dailyTotal.save();
+  fifteenMinuteTotal.save();
+}
+
+export function handleSynthExchange4(event: SynthExchangeEvent): void {
+  handleSynthExchange(event, false);
+}
+
+export function handleSynthExchange32(event: SynthExchangeEvent): void {
+  handleSynthExchange(event, true);
+}
+
+export function handleExchangeReclaim(event: ExchangeReclaimEvent): void {
+  let entity = new ExchangeReclaim(event.transaction.hash.toHex() + '-' + event.logIndex.toString());
+  entity.account = event.params.account;
+  entity.amount = event.params.amount;
+  entity.currencyKey = event.params.currencyKey;
+  entity.timestamp = event.block.timestamp;
+  entity.block = event.block.number;
+  entity.gasPrice = event.transaction.gasPrice;
+  let exRates = getExchangeRates(event.address);
+  if (exRates != null) {
+    entity.amountInUSD = exRates.effectiveValue(event.params.currencyKey, event.params.amount, sUSD32);
+  }
+  entity.save();
+}
+
+export function handleExchangeRebate(event: ExchangeRebateEvent): void {
+  let entity = new ExchangeRebate(event.transaction.hash.toHex() + '-' + event.logIndex.toString());
+  entity.account = event.params.account;
+  entity.amount = event.params.amount;
+  entity.currencyKey = event.params.currencyKey;
+  entity.timestamp = event.block.timestamp;
+  entity.block = event.block.number;
+  entity.gasPrice = event.transaction.gasPrice;
+  let exRates = getExchangeRates(event.address);
+  if (exRates != null) {
+    entity.amountInUSD = exRates.effectiveValue(event.params.currencyKey, event.params.amount, sUSD32);
+  }
+  entity.save();
+}
+
+function loadTotal(): Total {
+  let newTotal = new Total('mainnet');
+  newTotal.trades = BigInt.fromI32(0);
+  newTotal.exchangers = BigInt.fromI32(0);
+  newTotal.exchangeUSDTally = BigInt.fromI32(0);
+  newTotal.totalFeesGeneratedInUSD = BigInt.fromI32(0);
+  return newTotal;
+}
+
+function loadPostArchernarTotal(): PostArchernarTotal {
+  let newPostArchernarTotal = new PostArchernarTotal('mainnet');
+  newPostArchernarTotal.trades = BigInt.fromI32(0);
+  newPostArchernarTotal.exchangers = BigInt.fromI32(0);
+  newPostArchernarTotal.exchangeUSDTally = BigInt.fromI32(0);
+  newPostArchernarTotal.totalFeesGeneratedInUSD = BigInt.fromI32(0);
+  return newPostArchernarTotal;
+}
+
+function loadDailyTotal(id: string): DailyTotal {
+  let newDailyTotal = new DailyTotal(id);
+  newDailyTotal.trades = BigInt.fromI32(0);
+  newDailyTotal.exchangers = BigInt.fromI32(0);
+  newDailyTotal.exchangeUSDTally = BigInt.fromI32(0);
+  newDailyTotal.totalFeesGeneratedInUSD = BigInt.fromI32(0);
+  return newDailyTotal;
+}
+
+function loadFifteenMinuteTotal(id: string): FifteenMinuteTotal {
+  let newFifteenMinuteTotal = new FifteenMinuteTotal(id);
+  newFifteenMinuteTotal.trades = BigInt.fromI32(0);
+  newFifteenMinuteTotal.exchangers = BigInt.fromI32(0);
+  newFifteenMinuteTotal.exchangeUSDTally = BigInt.fromI32(0);
+  newFifteenMinuteTotal.totalFeesGeneratedInUSD = BigInt.fromI32(0);
+  return newFifteenMinuteTotal;
+}
+
+function addPostArchernarTotalFeesAndVolume(
+  postArchernarTotal: PostArchernarTotal,
+  fromAmountInUSD: BigInt,
+  feesInUSD: BigInt,
+): PostArchernarTotal {
+  postArchernarTotal.exchangeUSDTally = postArchernarTotal.exchangeUSDTally.plus(fromAmountInUSD);
+  postArchernarTotal.totalFeesGeneratedInUSD = postArchernarTotal.totalFeesGeneratedInUSD.plus(feesInUSD);
+  return postArchernarTotal;
+}
+
+function addTotalFeesAndVolume(total: Total, fromAmountInUSD: BigInt, feesInUSD: BigInt): Total {
+  total.exchangeUSDTally = total.exchangeUSDTally.plus(fromAmountInUSD);
+  total.totalFeesGeneratedInUSD = total.totalFeesGeneratedInUSD.plus(feesInUSD);
+  return total;
+}
+
+function addDailyTotalFeesAndVolume(dailyTotal: DailyTotal, fromAmountInUSD: BigInt, feesInUSD: BigInt): DailyTotal {
+  dailyTotal.exchangeUSDTally = dailyTotal.exchangeUSDTally.plus(fromAmountInUSD);
+  dailyTotal.totalFeesGeneratedInUSD = dailyTotal.totalFeesGeneratedInUSD.plus(feesInUSD);
+  return dailyTotal;
+}
+
+function addFifteenMinuteTotalFeesAndVolume(
+  fifteenMinuteTotal: FifteenMinuteTotal,
+  fromAmountInUSD: BigInt,
+  feesInUSD: BigInt,
+): FifteenMinuteTotal {
+  fifteenMinuteTotal.exchangeUSDTally = fifteenMinuteTotal.exchangeUSDTally.plus(fromAmountInUSD);
+  fifteenMinuteTotal.totalFeesGeneratedInUSD = fifteenMinuteTotal.totalFeesGeneratedInUSD.plus(feesInUSD);
+  return fifteenMinuteTotal;
+}

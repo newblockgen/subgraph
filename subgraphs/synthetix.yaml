@@ -1,0 +1,161 @@
+specVersion: 0.0.2
+description: Synthetix API
+repository: https://github.com/Synthetixio/synthetix-subgraph
+schema:
+  file: ./synthetix.graphql
+dataSources:
+  # for the new Proxy
+  - kind: ethereum/contract
+    name: Synthetix # will be ignored in our mapping but needs to be unique
+    network: bsc
+    source:
+      address: '0xC0eFf7749b125444953ef89682201Fb8c6A917CD' # new ProxySynthetix (ERC20)
+      abi: Synthetix
+      startBlock: 9769220 # creation of this proxy
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ../src/mapping.ts
+      entities:
+        - Transfer
+      abis:
+        - name: Synthetix
+          file: ../abis/Synthetix.json
+        - name: Synthetix4
+          file: ../abis/Synthetix_bytes4.json
+        - name: Synthetix32
+          file: ../abis/Synthetix_bytes32.json
+        - name: AddressResolver
+          file: ../abis/AddressResolver.json
+        - name: SynthetixState
+          file: ../abis/SynthetixState.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransferSNX
+
+  # Handle Proxy target updated events on current Proxy
+  - kind: ethereum/contract
+    name: ProxySynthetix
+    network: bsc
+    source:
+      address: '0xC0eFf7749b125444953ef89682201Fb8c6A917CD' # old ProxySynthetix
+      abi: Proxy
+      startBlock: 9769220 # Creation of this proxy
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ../src/mapping.ts
+      entities:
+        - ProxyTargetUpdated
+      abis:
+        - name: Proxy
+          file: ../abis/Proxy.json
+      eventHandlers:
+        - event: TargetUpdated(address)
+          handler: handleProxyTargetUpdated
+
+  #  Handle Transfer on current, but deprecated, ProxysUSD
+  - kind: ethereum/contract
+    name: SynthzUSD
+    network: bsc
+    source:
+      address: '0xF0186490B18CB74619816CfC7FeB51cdbe4ae7b9' # ProxyzUSD (old Proxy, will be decomissioned soon)
+      abi: Synth
+      startBlock: 9769220 # creation
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ../src/mapping.ts
+      entities:
+        - Transfer
+        - Issued
+        - Burned
+      abis:
+        - name: Synth
+          file: ../abis/Synth.json
+        - name: Synthetix
+          file: ../abis/Synthetix.json
+        - name: Synthetix4
+          file: ../abis/Synthetix_bytes4.json
+        - name: Synthetix32
+          file: ../abis/Synthetix_bytes32.json
+        - name: AddressResolver
+          file: ../abis/AddressResolver.json
+        - name: SynthetixState
+          file: ../abis/SynthetixState.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransferSynth
+        - event: Issued(indexed address,uint256)
+          handler: handleIssuedSynths
+        - event: Burned(indexed address,uint256)
+          handler: handleBurnedSynths
+
+  # Handle RewardEscrow Transfers (determine who has collected fees)
+  - kind: ethereum/contract
+    name: RewardEscrow
+    network: bsc
+    source:
+      address: '0x0C5db2579AAb8C56D1e395082A1c870a7d28f3DA' # RewardEscrow
+      abi: RewardEscrow
+      startBlock: 9769220
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ../src/mapping.ts
+      entities:
+        - RewardEscrowHolder
+        - SNXHolder
+      abis:
+        - name: RewardEscrow
+          file: ../abis/RewardEscrow.json
+        - name: Synthetix
+          file: ../abis/Synthetix.json
+        - name: Synthetix4
+          file: ../abis/Synthetix_bytes4.json
+        - name: Synthetix32
+          file: ../abis/Synthetix_bytes32.json
+        - name: Synthetix32
+          file: ../abis/Synthetix_bytes32.json
+        - name: AddressResolver
+          file: ../abis/AddressResolver.json
+        - name: SynthetixState
+          file: ../abis/SynthetixState.json
+      eventHandlers:
+        - event: VestingEntryCreated(indexed address,uint256,uint256)
+          handler: handleRewardVestEvent
+        - event: Vested(indexed address,uint256,uint256)
+          handler: handleRewardVestEvent
+
+  # Handle FeePool FeesClaimed
+  - kind: ethereum/contract
+    name: FeePool
+    network: bsc
+    source:
+      address: '0xFCF3afa6cdA14B438AeEb8FfEd433D196Cd1367F' # ProxyFeePool
+      abi: FeePool
+      startBlock: 9769220
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ../src/mapping.ts
+      entities:
+        - FeesClaimed
+        - SNXHolder
+      abis:
+        - name: FeePool
+          file: ../abis/FeePool.json
+        - name: FeePoolv217
+          file: ../abis/FeePool_v2.17.json
+        - name: Synthetix4
+          file: ../abis/Synthetix_bytes4.json
+        - name: Synthetix32
+          file: ../abis/Synthetix_bytes32.json
+      eventHandlers:
+        - event: FeesClaimed(address,uint256,uint256)
+          handler: handleFeesClaimed
