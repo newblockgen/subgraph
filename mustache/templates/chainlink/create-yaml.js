@@ -27,7 +27,12 @@ module.exports = {
           event: 'AnswerUpdated(indexed int256,indexed uint256,uint256)',
           handler: 'handleAggregatorAnswerUpdated',
         },
-      ]
+      ],
+      blockHandlers:[
+        {
+          handler:'handleBlock',
+        },
+      ],
     });
 
     // note that the filter here will have to be changed and this section updated

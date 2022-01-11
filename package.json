@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "yaml:chainlink": "node ./create-yaml-file create-yaml --subgraph chainlink --env prod --universal-test-block null | mustache - mustache/yaml.mustache > subgraphs/synthetix-chainlink.yaml",
-    "codegen": "node prepare-abis && graph codegen",
+    "codegen": "graph codegen",
     "codegen:chainlink": "npm run yaml:chainlink && npm run codegen -- subgraphs/synthetix-chainlink.yaml",
     "build": "graph build",
     "build:chainlink": "graph build subgraphs/synthetix-chainlink.yaml",
