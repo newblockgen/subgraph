@@ -1,118 +1,57 @@
-import { AnswerUpdated as AnswerUpdatedEvent } from '../generated/AggregatorBNB/Aggregator';
-import { AddressResolver } from '../generated/AggregatorBNB/AddressResolver';
-import { ExchangeRates } from '../generated/ExchangeRates/ExchangeRates';
+import { BigInt, ethereum, log, Address } from "@graphprotocol/graph-ts"
+import {
+  Contract,
+} from "../generated/Contract/Contract"
+import { History, Price } from "../generated/schema"
 
-import { AggregatorAnswer, LatestRate } from '../generated/schema';
+export function handleBlock(block: ethereum.Block): void {
 
-import { contracts } from './contractsData';
-import { contractsToProxies } from './contractsToProxies';
-import { strToBytes } from './common';
+  let PAIR = "ETH/USD"
 
-import { ByteArray, Bytes, BigInt, Address, log } from '@graphprotocol/graph-ts';
+  //Create a new Price object, with the block number as ID.
+  let price = new Price(block.number.toString())
 
-function createRates(event: AnswerUpdatedEvent, currencyKey: Bytes, rate: BigInt): void {
-  let entity = new AggregatorAnswer(event.transaction.hash.toHex() + '-' + currencyKey.toString());
-  entity.block = event.block.number;
-  entity.timestamp = event.block.timestamp;
-  entity.currencyKey = currencyKey;
-  entity.synth = currencyKey.toString();
-  entity.rate = rate;
-  entity.roundId = event.params.roundId;
-  entity.aggregator = event.address;
-  entity.save();
-
-  let latestRate = LatestRate.load(entity.synth);
-  if (latestRate == null) {
-    latestRate = new LatestRate(entity.synth);
+  //Try to load the History object, but if not, then create it.
+  let history = History.load(PAIR)
+  if(history == null){
+    history = new History(PAIR)
+    history.latestBlock = BigInt.fromI32(0)
+    history.lastPrice = BigInt.fromI32(0)
+    history.priceHistory = []
   }
-  latestRate.rate = entity.rate;
-  latestRate.save();
-}
 
-// create a contract mapping to know which synth the aggregator corresponds to
-export function handleAggregatorAnswerUpdated(event: AnswerUpdatedEvent): void {
-  // From Pollux on, use the ExchangeRates to get the currency keys that use this aggregator
-  if (event.block.number > BigInt.fromI32(1)) {
-    // Note: hard coding the latest ReadProxyAddressResolver address
-    let readProxyAdressResolver = '0x263A8220e9351c5d0cC13567Db4d7BF58e7470c6';
-    let resolver = AddressResolver.bind(Address.fromHexString(readProxyAdressResolver) as Address);
-    let exrates = ExchangeRates.bind(resolver.getAddress(strToBytes('ExchangeRates', 32)));
-
-    let tryCurrencyKeys = exrates.try_currenciesUsingAggregator(Address.fromHexString(
-      // for the aggregator, we need the proxy
-      contractsToProxies.get(event.address.toHexString()),
-    ) as Address);
-
-    if (tryCurrencyKeys.reverted) {
-      log.debug('currenciesUsingAggregator was reverted in tx hash: {}, from block: {}', [
-        event.transaction.hash.toHex(),
-        event.block.number.toString(),
-      ]);
-      return;
-    }
-
-    let currencyKeys = tryCurrencyKeys.value;
-    let key = strToBytes('HZN', 32)
-    currencyKeys = [key];
+  //Create a new instance of Chainlink Contract
+  let oracle = Contract.bind(Address.fromString("0xF79D6aFBb6dA890132F9D7c355e3015f15F3406F"))
 
 
-    // for each currency key using this aggregator
-    for (let i = 0; i < currencyKeys.length; i++) {
-      // create an answer entity for the non-zero entries
-      if (currencyKeys[i].toString() != '') {
-        createRates(event, currencyKeys[i], event.params.current);
-      }
-    }
-  } else {
-    // for pre-pollux, use a contract mapping to get the currency key
-    let currencyKey = contracts.get(event.address.toHexString());
-    // and calculate the rate from Chainlink's Aggregator directly by multiplying by 1e10 to
-    // turn the 8 decimal int to a 18 decimal one
-    let rate = event.params.current.times(BigInt.fromI32(10).pow(10));
-    createRates(event, ByteArray.fromHexString(currencyKey) as Bytes, rate);
+  //Call to get price information
+  let callResult = oracle.try_latestAnswer()
+  if(callResult.reverted){
+    log.warning("Get Latest price reverted at block: {}", [block.number.toString()])
   }
-}
+
+  log.warning("The Price of ETH at Block: {} was: {}", [block.number.toString(),callResult.value.toString()])
+
+  //Add data onto Price
+  price.timestamp = block.timestamp
+  price.blockNumber = block.number
+  price.price = callResult.value
+  price.pair = PAIR
 
 
-export function handleAggregatorAnswerUpdated2(event: AnswerUpdatedEvent): void {
-  // From Pollux on, use the ExchangeRates to get the currency keys that use this aggregator
-  if (event.block.number > BigInt.fromI32(1)) {
-    // Note: hard coding the latest ReadProxyAddressResolver address
-    let readProxyAdressResolver = '0x263A8220e9351c5d0cC13567Db4d7BF58e7470c6';
-    let resolver = AddressResolver.bind(Address.fromHexString(readProxyAdressResolver) as Address);
-    let exrates = ExchangeRates.bind(resolver.getAddress(strToBytes('ExchangeRates', 32)));
-
-    let tryCurrencyKeys = exrates.try_currenciesUsingAggregator(Address.fromHexString(
-      // for the aggregator, we need the proxy
-      contractsToProxies.get(event.address.toHexString()),
-    ) as Address);
-
-    if (tryCurrencyKeys.reverted) {
-      log.debug('currenciesUsingAggregator was reverted in tx hash: {}, from block: {}', [
-        event.transaction.hash.toHex(),
-        event.block.number.toString(),
-      ]);
-      return;
-    }
-
-    let currencyKeys = tryCurrencyKeys.value;
-    let key = strToBytes('HZN', 32)
-    currencyKeys = [key];
+  //Update History
+  history.latestBlock = block.number
+  history.lastPrice = callResult.value
 
 
-    // for each currency key using this aggregator
-    for (let i = 0; i < currencyKeys.length; i++) {
-      // create an answer entity for the non-zero entries
-      if (currencyKeys[i].toString() != '') {
-        createRates(event, currencyKeys[i], event.params.current);
-      }
-    }
-  } else {
-    // for pre-pollux, use a contract mapping to get the currency key
-    let currencyKey = contracts.get(event.address.toHexString());
-    // and calculate the rate from Chainlink's Aggregator directly by multiplying by 1e10 to
-    // turn the 8 decimal int to a 18 decimal one
-    let rate = event.params.current.times(BigInt.fromI32(10).pow(10));
-    createRates(event, ByteArray.fromHexString(currencyKey) as Bytes, rate);
-  }
+  //Add this price to this history array
+  let priceHistory = history.priceHistory
+  priceHistory.push(price.id)
+  history.priceHistory = priceHistory
+
+
+  //Save the Price
+  price.save()
+  //Save the History
+  history.save()
 }
