@@ -1,5 +1,5 @@
-const Contracts = require('../chainlink/contracts');
-const ChainlinkSpecificContracts = require('./contracts');
+
+const Contracts = require('./contracts');
 const { createStartBlock } = require('../common');
 
 // TODO - If Synthetix ran any aggregators that were not provided by
@@ -13,36 +13,29 @@ module.exports = {
       mappingFile: '../src/chainlink-mapping.ts',
       startBlock: createStartBlock(startBlocks, env, universalTestBlock, false),
       address,
-      abi: 'Aggregator',
-      entities: ['AggregatorAnswer'],
+      abi: 'Contract',
+      entities: ['ResponseReceived','OwnershipRenounced','OwnershipTransferred','ChainlinkRequested','ChainlinkFulfilled' ,
+      'ChainlinkCancelled','AnswerUpdated','NewRound'],
       abis: [
         {
           name: 'Contract',
           path: '../abis/Contract.json',
         }
       ],
-     /* events: [
+      events: [
         {
           event: 'AnswerUpdated(indexed int256,indexed uint256,uint256)',
           handler: 'handleAggregatorAnswerUpdated',
         },
-      ],*/
-      blockHandlers:[
-        {
-          handler:'handleBlock'
-        }
       ]
     });
 
     // note that the filter here will have to be changed and this section updated
     // as chainlink adds new contract types
-    return [...Contracts, ...ChainlinkSpecificContracts]
-      .filter(({ type }) => type === 'aggregator')
-      .map(({ name, prod, test, address }) => {
-        if (!SYNTHETIX_AGGREGATOR_NAMES.includes(name)) {
-          const startBlocks = { prod, test };
-          return createAggregatorBlock({ name, startBlocks, address });
-        }
-      });
+
+    return Contracts.map(({ prod, test, type, name, address }) => {
+      const startBlocks = { prod, test, exchanger: null };
+        return createAggregatorBlock({ startBlocks, name, address });
+    });
   },
 };

@@ -1,0 +1,33 @@
+specVersion: 0.0.2
+description: Chainlink Rates API
+repository: https://github.com/Synthetixio/synthetix-subgraph
+schema:
+  file: ./synthetix-chainlink.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: CAKEBNB
+    network: bsc
+    source:
+      address: '0xcb23da9ea243f53194cbc2380a6d4d9bc046161f'
+      abi: Contract
+      startBlock: 10557958
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ../src/chainlink-mapping.ts
+      entities:
+        - ResponseReceived
+        - OwnershipRenounced
+        - OwnershipTransferred
+        - ChainlinkRequested
+        - ChainlinkFulfilled
+        - ChainlinkCancelled
+        - AnswerUpdated
+        - NewRound
+      abis:
+        - name: Contract
+          file: ../abis/Contract.json
+      eventHandlers:
+        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+          handler: handleAggregatorAnswerUpdated
