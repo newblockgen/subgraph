@@ -32,5 +32,9 @@ dataSources:
         - event: {{event}}
           handler: {{handler}}
         {{/events}}
+       blockHandlers:
+          {{#handler}}
+         - handler: {{handler}}
+          {{/handler}}
     {{/dataSources}}
   {{/yaml}}
