@@ -1,3 +1,4 @@
+/*
 import { RatesUpdated as RatesUpdatedEvent } from '../generated/AggregatorBNB/ExchangeRates';
 import { AnswerUpdated as AnswerUpdatedEvent } from '../generated/AggregatorBNB/Aggregator';
 import { AddressResolver } from '../generated/AggregatorBNB/AddressResolver';
@@ -163,3 +164,4 @@ function addDollar(dollarID: string): void {
     dollarRate.save();
   }
 }
+*/
