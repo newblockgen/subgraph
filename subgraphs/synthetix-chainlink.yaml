@@ -5,15 +5,15 @@ schema:
   file: ./synthetix-chainlink.graphql
 dataSources:
   - kind: ethereum/contract
-    name: CAKEBNB
+    name: chainlink
     network: bsc
     source:
-      address: '0xcb23da9ea243f53194cbc2380a6d4d9bc046161f'
+      address: '0x264990fbd0a4796a3e3d8e37c4d5f87a3aca5ebf'
       abi: Contract
-      startBlock: 10557958
+      startBlock: 14297010
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ../src/chainlink-mapping.ts
       entities:
@@ -28,6 +28,5 @@ dataSources:
       abis:
         - name: Contract
           file: ../abis/Contract.json
-      eventHandlers:
-        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
-          handler: handleAggregatorAnswerUpdated
+      blockHandlers:
+        -  handler: handleBlock

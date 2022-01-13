@@ -145,6 +145,14 @@ describe('Validation', () => {
     },
   )
   cliTest(
+    'NEAR is a valid chain',
+    ['codegen', '--skip-migrations'],
+    'validation/near-is-valid',
+    {
+      exitCode: 0,
+    },
+  )
+  cliTest(
     'Deprecated template format gives nice error',
     ['codegen', '--skip-migrations'],
     'validation/nested-template-nice-error',
@@ -193,6 +201,15 @@ describe('Validation', () => {
     'Invalid @fulltext directive',
     ['codegen', '--skip-migrations'],
     'validation/invalid-fulltext-directive',
+    {
+      exitCode: 1,
+    },
+  )
+
+  cliTest(
+    'Invalid GraphQL schema',
+    ['codegen', '--skip-migrations'],
+    'validation/invalid-graphql-schema',
     {
       exitCode: 1,
     },

@@ -1,9 +1,9 @@
 module.exports = [
   {
-    prod: 10557958,
+    prod: 14297010,
     test: null,
     type: 'chainlink',
-    name: 'CAKEBNB',
-    address: "'0xcb23da9ea243f53194cbc2380a6d4d9bc046161f'",
+    name: 'chainlink',
+    address: "'0x264990fbd0a4796a3e3d8e37c4d5f87a3aca5ebf'",
   }
 ];

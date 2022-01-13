@@ -8,3 +8,69 @@ type DailyCandle @entity {
     close: BigInt!
     timestamp: BigInt!
 }
+
+type FiveMinutePrice @entity {
+    id: ID!
+    synth: String!
+    open: BigInt!
+    high: BigInt!
+    low: BigInt!
+    close: BigInt!
+    timestamp: BigInt!
+}
+
+type FifteenMinutePrice @entity {
+    id: ID!
+    synth: String!
+    open: BigInt!
+    high: BigInt!
+    low: BigInt!
+    close: BigInt!
+    timestamp: BigInt!
+}
+
+
+type OneHourPrice @entity {
+    id: ID!
+    synth: String!
+    open: BigInt!
+    high: BigInt!
+    low: BigInt!
+    close: BigInt!
+    timestamp: BigInt!
+}
+
+type FourHoursPrice @entity {
+    id: ID!
+    synth: String!
+    open: BigInt!
+    high: BigInt!
+    low: BigInt!
+    close: BigInt!
+    timestamp: BigInt!
+}
+
+type WeekPrice @entity {
+    id: ID!
+    synth: String!
+    open: BigInt!
+    high: BigInt!
+    low: BigInt!
+    close: BigInt!
+    timestamp: BigInt!
+}
+
+type History @entity {
+    id: ID!
+    latestBlock: BigInt!
+    lastPrice: BigInt!
+    priceHistory: [Price!]!
+}
+
+type Price @entity {
+    id: ID!
+    timestamp: BigInt!
+    blockNumber: BigInt!
+    price: BigInt!
+    pair: String
+}
