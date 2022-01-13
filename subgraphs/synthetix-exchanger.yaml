@@ -1,0 +1,35 @@
+specVersion: 0.0.2
+description: exchanger API
+repository: https://github.com/Synthetixio/synthetix-subgraph
+schema:
+  file: ./synthetix-exchanger.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: exchanger
+    network: bsctest
+    source:
+      address: '0xb7C6B23E4e3d5681271cB7212526511fda749f28'
+      abi: Synthetix
+      startBlock: 15168572
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ../src/exchanger.ts
+      entities:
+        - AccountLiquidated
+        - CacheUpdated
+        - ExchangeRebate
+        - ExchangeReclaim
+        - ExchangeTracking
+        - OwnerChanged
+        - OwnerNominated
+        - SynthExchange
+        - TokenStateUpdated
+        - Transfer
+      abis:
+        - name: Synthetix
+          file: ../abis/Synthetix.json
+      eventHandlers:
+        - event: ExchangeTracking(indexed bytes32,bytes32,uint256,uint256)
+          handler: handleExchangeTracking
