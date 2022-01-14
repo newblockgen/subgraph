@@ -27,6 +27,11 @@ dataSources:
         - name: {{name}}
           file: {{&path}}
         {{/abis}}
+      eventHandlers:
+        {{#events}}
+        - event: {{event}}
+          handler: {{handler}}
+        {{/events}}
       blockHandlers:
         {{#blockHandlers}}
         -  handler: {{handler}}

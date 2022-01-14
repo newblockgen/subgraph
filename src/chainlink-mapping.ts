@@ -1,6 +1,7 @@
 import { BigInt, ethereum, log, Address, ByteArray, Bytes } from "@graphprotocol/graph-ts";
 import {
   Contract,
+  AnswerUpdated
 } from "../generated/chainlink/Contract"
 import { History, Price } from "../generated/schema"
 import {
@@ -13,6 +14,9 @@ import {
 } from "./candle-helper";
 
 import {chainlinkContracts} from "./contractsData"
+
+export function handleAggregatorAnswerUpdated(event:AnswerUpdated):void {
+}
 
 export function handleBlock(block: ethereum.Block): void {
 

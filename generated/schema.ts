@@ -16,12 +16,15 @@ export class Transaction extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("trackingCode", Value.fromBytes(Bytes.empty()));
-    this.set("toCurrencyKey", Value.fromBytes(Bytes.empty()));
+    this.set("transactionHash", Value.fromBytes(Bytes.empty()));
+    this.set("account", Value.fromBytes(Bytes.empty()));
+    this.set("fromAmount", Value.fromBigInt(BigInt.zero()));
     this.set("toAmount", Value.fromBigInt(BigInt.zero()));
     this.set("fee", Value.fromBigInt(BigInt.zero()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
     this.set("block", Value.fromBigInt(BigInt.zero()));
-    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("trackingCode", Value.fromString(""));
+    this.set("symbol", Value.fromString(""));
   }
 
   save(): void {
@@ -50,22 +53,65 @@ export class Transaction extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get trackingCode(): Bytes {
-    let value = this.get("trackingCode");
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
     return value!.toBytes();
   }
 
-  set trackingCode(value: Bytes) {
-    this.set("trackingCode", Value.fromBytes(value));
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
   }
 
-  get toCurrencyKey(): Bytes {
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get fromCurrencyKey(): string | null {
+    let value = this.get("fromCurrencyKey");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set fromCurrencyKey(value: string | null) {
+    if (!value) {
+      this.unset("fromCurrencyKey");
+    } else {
+      this.set("fromCurrencyKey", Value.fromString(<string>value));
+    }
+  }
+
+  get fromAmount(): BigInt {
+    let value = this.get("fromAmount");
+    return value!.toBigInt();
+  }
+
+  set fromAmount(value: BigInt) {
+    this.set("fromAmount", Value.fromBigInt(value));
+  }
+
+  get toCurrencyKey(): string | null {
     let value = this.get("toCurrencyKey");
-    return value!.toBytes();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set toCurrencyKey(value: Bytes) {
-    this.set("toCurrencyKey", Value.fromBytes(value));
+  set toCurrencyKey(value: string | null) {
+    if (!value) {
+      this.unset("toCurrencyKey");
+    } else {
+      this.set("toCurrencyKey", Value.fromString(<string>value));
+    }
   }
 
   get toAmount(): BigInt {
@@ -86,6 +132,15 @@ export class Transaction extends Entity {
     this.set("fee", Value.fromBigInt(value));
   }
 
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+
   get block(): BigInt {
     let value = this.get("block");
     return value!.toBigInt();
@@ -95,12 +150,595 @@ export class Transaction extends Entity {
     this.set("block", Value.fromBigInt(value));
   }
 
-  get timestamp(): BigInt {
-    let value = this.get("timestamp");
+  get trackingCode(): string {
+    let value = this.get("trackingCode");
+    return value!.toString();
+  }
+
+  set trackingCode(value: string) {
+    this.set("trackingCode", Value.fromString(value));
+  }
+
+  get symbol(): string {
+    let value = this.get("symbol");
+    return value!.toString();
+  }
+
+  set symbol(value: string) {
+    this.set("symbol", Value.fromString(value));
+  }
+}
+
+export class Account extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("accouts", Value.fromBytesArray(new Array(0)));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Account entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Account entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Account", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Account | null {
+    return changetype<Account | null>(store.get("Account", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get accouts(): Array<Bytes> {
+    let value = this.get("accouts");
+    return value!.toBytesArray();
+  }
+
+  set accouts(value: Array<Bytes>) {
+    this.set("accouts", Value.fromBytesArray(value));
+  }
+}
+
+export class Portfolios extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("account", Value.fromBytes(Bytes.empty()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("zasset", Value.fromStringArray(new Array(0)));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Portfolios entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Portfolios entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Portfolios", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Portfolios | null {
+    return changetype<Portfolios | null>(store.get("Portfolios", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
     return value!.toBigInt();
   }
 
-  set timestamp(value: BigInt) {
-    this.set("timestamp", Value.fromBigInt(value));
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get zasset(): Array<string> {
+    let value = this.get("zasset");
+    return value!.toStringArray();
+  }
+
+  set zasset(value: Array<string>) {
+    this.set("zasset", Value.fromStringArray(value));
+  }
+}
+
+export class ZAssetBalance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("currencyKey", Value.fromString(""));
+    this.set("balance", Value.fromBigInt(BigInt.zero()));
+    this.set("usdConvertBalance", Value.fromBigInt(BigInt.zero()));
+    this.set("rate", Value.fromBigInt(BigInt.zero()));
+    this.set("portfolios", Value.fromString(""));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save ZAssetBalance entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ZAssetBalance entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ZAssetBalance", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ZAssetBalance | null {
+    return changetype<ZAssetBalance | null>(store.get("ZAssetBalance", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currencyKey(): string {
+    let value = this.get("currencyKey");
+    return value!.toString();
+  }
+
+  set currencyKey(value: string) {
+    this.set("currencyKey", Value.fromString(value));
+  }
+
+  get balance(): BigInt {
+    let value = this.get("balance");
+    return value!.toBigInt();
+  }
+
+  set balance(value: BigInt) {
+    this.set("balance", Value.fromBigInt(value));
+  }
+
+  get usdConvertBalance(): BigInt {
+    let value = this.get("usdConvertBalance");
+    return value!.toBigInt();
+  }
+
+  set usdConvertBalance(value: BigInt) {
+    this.set("usdConvertBalance", Value.fromBigInt(value));
+  }
+
+  get rate(): BigInt {
+    let value = this.get("rate");
+    return value!.toBigInt();
+  }
+
+  set rate(value: BigInt) {
+    this.set("rate", Value.fromBigInt(value));
+  }
+
+  get portfolios(): string {
+    let value = this.get("portfolios");
+    return value!.toString();
+  }
+
+  set portfolios(value: string) {
+    this.set("portfolios", Value.fromString(value));
+  }
+}
+
+export class OneHourPortFolio extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("account", Value.fromBytes(Bytes.empty()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save OneHourPortFolio entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save OneHourPortFolio entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("OneHourPortFolio", id.toString(), this);
+    }
+  }
+
+  static load(id: string): OneHourPortFolio | null {
+    return changetype<OneHourPortFolio | null>(
+      store.get("OneHourPortFolio", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+}
+
+export class OneDayPortFolio extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("account", Value.fromBytes(Bytes.empty()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save OneDayPortFolio entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save OneDayPortFolio entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("OneDayPortFolio", id.toString(), this);
+    }
+  }
+
+  static load(id: string): OneDayPortFolio | null {
+    return changetype<OneDayPortFolio | null>(store.get("OneDayPortFolio", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+}
+
+export class WeekPortFolio extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("account", Value.fromBytes(Bytes.empty()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save WeekPortFolio entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save WeekPortFolio entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("WeekPortFolio", id.toString(), this);
+    }
+  }
+
+  static load(id: string): WeekPortFolio | null {
+    return changetype<WeekPortFolio | null>(store.get("WeekPortFolio", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+}
+
+export class MonthPortFolio extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("account", Value.fromBytes(Bytes.empty()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save MonthPortFolio entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save MonthPortFolio entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("MonthPortFolio", id.toString(), this);
+    }
+  }
+
+  static load(id: string): MonthPortFolio | null {
+    return changetype<MonthPortFolio | null>(store.get("MonthPortFolio", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+}
+
+export class YearPortFolio extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("account", Value.fromBytes(Bytes.empty()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save YearPortFolio entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save YearPortFolio entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("YearPortFolio", id.toString(), this);
+    }
+  }
+
+  static load(id: string): YearPortFolio | null {
+    return changetype<YearPortFolio | null>(store.get("YearPortFolio", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
   }
 }

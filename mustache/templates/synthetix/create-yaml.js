@@ -8,7 +8,8 @@ const contracts = require('./contracts');
 module.exports = {
   createYaml: (env, universalTestBlock, subgraph) => {
     const commonRatesABI = 'Synthetix';
-    const commonRatesEntities = ['RatesUpdated'];
+    const commonRatesEntities = ['AccountLiquidated','CacheUpdated','ExchangeRebate','ExchangeReclaim','ExchangeTracking',
+      'OwnerChanged','OwnerNominated','SynthExchange','TokenStateUpdated','Transfer'];
     const useExchangerBlocks = subgraph === 'exchanger';
 
     const createRatesBlock = ({ name, startBlocks, address, bytes, abiPath = null }) => ({
@@ -26,8 +27,44 @@ module.exports = {
       ],
       events: [
         {
-          event: `RatesUpdated(bytes${bytes}[],uint256[])`,
-          handler: 'handleRatesUpdated',
+          event: `ExchangeTracking(indexed bytes32,bytes32,uint256,uint256)`,
+          handler: 'handleExchangeTracking',
+        },
+        {
+          event: `Transfer(indexed address,indexed address,uint256)`,
+          handler: 'handleExchangeTransfer',
+        },
+        {
+          event: `AccountLiquidated(indexed address,uint256,uint256,address)`,
+          handler: 'handleAccountLiquidated',
+        },
+        {
+          event: `CacheUpdated(bytes32,address)`,
+          handler: 'handleCacheUpdated',
+        },
+        {
+          event: `ExchangeRebate(indexed address,bytes32,uint256)`,
+          handler: 'handleExchangeRebate',
+        },
+        {
+          event: `ExchangeReclaim(indexed address,bytes32,uint256)`,
+          handler: 'handleExchangeReclaim',
+        },
+        {
+          event: `OwnerChanged(address,address)`,
+          handler: 'handleOwnerChanged',
+        },
+        {
+          event: `OwnerNominated(address)`,
+          handler: 'handleOwnerNominated',
+        },
+        {
+          event: `SynthExchange(indexed address,bytes32,uint256,bytes32,uint256,address)`,
+          handler: 'handleSynthExchange',
+        },
+        {
+          event: `TokenStateUpdated(address)`,
+          handler: 'handleTokenStateUpdated',
         },
       ],
     });

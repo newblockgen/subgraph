@@ -22,12 +22,12 @@ module.exports = {
           path: '../abis/Contract.json',
         }
       ],
-   /*    events: [
+      events: [
         {
           event: 'AnswerUpdated(indexed int256,indexed uint256,uint256)',
           handler: 'handleAggregatorAnswerUpdated',
         },
-      ], */
+      ],
       blockHandlers:[
           {
             handler: 'handleBlock'

@@ -1,10 +1,77 @@
 # RatesUpdated tracks this event from the ExchangeRates.sol contract
-type Transaction @entity {
-    id: ID!
-    trackingCode: Bytes!
-    toCurrencyKey: Bytes!
-    toAmount: BigInt!
-    fee: BigInt!
-    block: BigInt!
-    timestamp: BigInt!
+type Transaction @entity{
+    id:ID!
+    transactionHash:Bytes!
+    account:Bytes! #Address
+    fromCurrencyKey:String
+    fromAmount:BigInt!
+    toCurrencyKey:String
+    toAmount:BigInt!
+    fee:BigInt!
+    timstamp:BigInt!
+    block:BigInt!
+    trackingCode:String!
+    symbol:String!
+}
+
+type Account @entity{
+    id:ID!
+    accouts:[Bytes!]!
+}
+
+type Portfolios @entity{
+    id:ID!
+    account:Bytes!
+    timstamp:BigInt!
+    amount:BigInt!
+    zasset:[ZAssetBalance!]!
+}
+
+type ZAssetBalance @entity{
+    id:ID!
+    currencyKey: String!
+    balance: BigInt!
+    usdConvertBalance: BigInt!
+    rate:BigInt!
+    portfolios: Portfolios!
+}
+
+type OneHourPortFolio @entity{
+    id:ID!
+    account:Bytes!
+    timstamp:BigInt!
+    amount:BigInt!
+    startAmount:BigInt!
+}
+
+type OneDayPortFolio @entity{
+    id:ID!
+    account:Bytes!
+    timstamp:BigInt!
+    amount:BigInt!
+    startAmount:BigInt!
+}
+
+type WeekPortFolio @entity{
+    id:ID!
+    account:Bytes!
+    timstamp:BigInt!
+    amount:BigInt!
+    startAmount:BigInt!
+}
+
+type MonthPortFolio @entity{
+    id:ID!
+    account:Bytes!
+    timstamp:BigInt!
+    amount:BigInt!
+    startAmount:BigInt!
+}
+
+type YearPortFolio @entity{
+    id:ID!
+    account:Bytes!
+    timstamp:BigInt!
+    amount:BigInt!
+    startAmount:BigInt!
 }
