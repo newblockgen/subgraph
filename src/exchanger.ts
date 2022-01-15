@@ -33,6 +33,11 @@ import { synthetixCurrencies, currencies, chainlinkContracts } from "./contracts
 // 按区块统计用户余额
 export function handleBlock(block: ethereum.Block): void {
   let address = dataSource.address();
+  let time = block.timestamp;
+  if ((time.mod(BigInt.fromI32(3600))) > BigInt.fromI32(5)){
+    log.info("time is not used {}",[time.mod(BigInt.fromI32(3600)).toString()]);
+    return;
+  }
   let accounts = RegisterMember.load(address.toHex() + "-account");
   if (accounts) {
     let currencyPrice = new Map<string, BigDecimal[]>();
