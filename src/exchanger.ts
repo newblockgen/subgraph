@@ -195,10 +195,8 @@ function addAccount(account: Bytes, block: ethereum.Block): void {
   if (accounts === null) {
     accounts = new RegisterMember(dataSource.address().toHex() + "-account");
   }
-  log.info("account is : {}",[account.toHexString()]);
   let accountArray = accounts.accountList;
   if (accountArray.indexOf(account.toHexString()) == -1) {
-    log.info("account 2 is : {}",[account.toHexString()]);
     let accountBody = Account.load(account.toHexString());
     if (!accountBody) {
       accountBody = new Account(account.toHexString());
