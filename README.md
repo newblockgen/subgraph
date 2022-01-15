@@ -8,81 +8,92 @@ Synthetix has eleven bundled subgraps, all generated from this one repository:
 
 ![image](https://user-images.githubusercontent.com/799038/79390156-32c93080-7f3d-11ea-812a-34ad3543fc28.png)
 
-1. **Synthetix**: issuing (aka minting) sUSD, burning sUSD and transferring SNX & Synths: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix
-2. **Exchanges**: synth Exchange Volume and fees generated: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-exchanges
-3. **Rates**: historical rates on-chain for the various synths to USD: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-rates
-4. **Depot**: deposits, withdrawls and successful exchanges in the Depot: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-depot
-5. **Loans**: loans created and closed using EtherCollateral: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-loans
-6. **Binary Options**: Binary options data: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-binary-options
-7. **Grants DAO**: Grants DAO data: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-grantsdao
-8. **Exchanger**: Tracks exchange entries and volume sources: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-exchanger
-9. **Liquidations**: Tracks protocol liquidations: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-liquidations
-10. **Limit Orders**: Tracks limit orders: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-limit-orders
-11. **Chainlink**: Tracks chainlink rates: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-chainlink
-12. **Wallet Delegation**: Tracks which wallets have been authorised for delegation: https://thegraph.com/explorer/subgraph/synthetixio-team/synthetix-delegation
+1. **chainlink**: 查询指定交易对的chainlink 价格，chainlik 合约地址对应
+   -- `mainnet`:https://data.chain.link/bsc/mainnet
+   -- `testnet`:https://docs.chain.link/docs/binance-smart-chain-addresses
+   
+2. **exchanger**: 交易对 交易记录 以及 用户指定币种的持币记录
 
-## To run and deploy locally
+
+
+## 运行
 
 For any of the eleven subgraphs: `snx`, `exchanges`, `rates`, `depot`, `loans`, `binary-options` etc... as `[subgraph]`
-
+1. 修改合约地址：`src/contractsData.ts` 中的合约地址
+   修改对应 yaml 合约监听地址
 1. Run the `npm run codegen:[subgraph]` task to prepare the TypeScript sources for the GraphQL (generated/schema) and the ABIs (generated/[ABI]/\*)
 2. [Optional] run the `npm run build:[subgraph]` task for the subgraph
 3. Deploy via `npm run deploy:[subgraph]`. Note: requires env variable of `$THEGRAPH_SNX_ACCESS_TOKEN` set in bash to work.
 
-## To test deploy the Chainlink, Rates, or Exchanger subgraphs at different start blocks
+## 返回对象说明
 
-1. First, you have to udpate the `--env` flag to `test` in `yaml:rates` or `yaml:exchanger` in `package.json` and then it will pick up any changes you make to the `test` field start blocks in the `contracts` file in the relevant subgraph folder inside the `./mustache` folder. If you leave a test block as null it will use the prod block instead.
-
-IMPORTANT: if you just want to use a single start block for all contracts within the chainlink, rates, or exchanger subgraph, simply change the `--universal-test-block` flag in `yaml:rates` or `yaml:exchanger` or `yaml:chainlink` in `package.json` from `null` to `<number>` and you don't need to make any changes to the `contracts` file in that case; it will pick up this number for every contract in the yaml file.
-
-2. Continue from step 2 in the section `To run and deploy locally` above.
-
-## To query these subgraphs
-
-Please use our node & browser utility: [synthetix-data](https://github.com/Synthetixio/synthetix-data).
-
-## Or to query the subgraphs without any JS library
-
-In it's simplest version (on a modern browser assuming `async await` support and `fetch`):
-
-```javascript
-// Fetch all Exchanges in the last 24hrs s
-(async () => {
-  const ts = Math.floor(Date.now() / 1e3);
-  const oneDayAgo = ts - 3600 * 24;
-  const body = JSON.stringify({
-    query: `{
-      synthExchanges(
-        orderBy:timestamp,
-        orderDirection:desc,
-        where:{timestamp_gt: ${oneDayAgo}}
-      )
-      {
-        fromAmount
-        fromAmountInUSD
-        fromCurrencyKey
-        toCurrencyKey
-        block
-        timestamp
-        toAddress
-        toAmount
-        toAmountInUSD
-        feesInUSD
-      }
-    }`,
-    variables: null,
-  });
-
-  const response = await fetch('https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-exchanges', {
-    method: 'POST',
-    body,
-  });
-
-  const json = await response.json();
-  const { synthExchanges } = json.data;
-  // ...
-  console.log(synthExchanges);
-})();
-```
-
-> Note: due to The Graph limitation, only `100` results will be returned (the maximum allowed `first` amount). The way around this is to use paging (using the `skip` operator in GraphQL). See the function `pageResults` in [synthetix-data](https://github.com/Synthetixio/synthetix-data/blob/master/index.js) for an example.
+1. chainlink
+    ````
+     Price:              单线币对价格，只有price
+     FiveMinutePrice:    币对5分钟价格K线，包含 synth(币对)、open、high、low、close
+     FifteenMinutePrice: 币对15分钟价格K线
+     OneHourPrice:       币对60分钟价格K线
+     FourHoursPrice:     币对 4h 价格K线
+     WeekPrice:          币对 1周 价格K线
+     DailyCandle:        币对 1天 价格K线
+    ````
+2. exchanger
+   
+   1). 交易记录
+   ````
+   Transaction
+   
+   {
+     transactions(first:1){
+       id
+       transactionHash    #交易hash
+       account            #操作地址
+       fromCurrencyKey    #币对from
+       fromAmount         #币对from 数量
+       toCurrencyKey      #币对to  
+       toAmount           #币对to  数量
+       fee                #手续费
+       block              #交易区块
+       symbol             #币对
+       trackingCode
+       timstamp           #交易时间
+     }
+   }
+   
+   ````
+  >Note: 查询指定币对的交易记录 和 指定地址的交易记录 可以通过 `where:{account:'',symbol:''}` 进行查询.
+  
+  
+   2). 钱包地址 持币指定币记录
+   ```
+   {
+     portfolios(first:1){
+       account               #持币地址
+       timstamp              #记录时间
+       amount                #持有币总价值（USD）
+       zasset{               #持有币明细
+         account              
+         currencyKey         #币种
+         balance             #币种数量
+         usdConvertBalance   #USD等价值
+         rate                #币对价格
+       }
+     }
+   }
+   
+   {
+     oneHourPortFolios(first:1){    #最近 1H 持币价值(USD)对比
+       account           #持币地址
+       timstamp          #最新记录时间
+       amount            #最新持币总价值（USD）
+       startAmount       # 指定时间前的历史总价值（USD）
+     }
+   }
+    OneDayPortFolios   #最近 7H 持币价值(USD)对比
+    WeekPortFolios     #最近 7D 持币价值(USD)对比
+    MonthPortFolio     #最近 30D 持币价值(USD)对比
+    YearPortFolio      #最近 1Y 持币价值(USD)对比
+   ```
+   
+   
+ 

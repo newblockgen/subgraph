@@ -3,7 +3,7 @@ import {
   Contract,
   AnswerUpdated
 } from "../generated/chainlink/Contract"
-import { History, Price } from "../generated/schema"
+import {  Price } from "../generated/schema"
 import {
   updateDailyCandle,
   updateFiveCandle,
@@ -13,15 +13,16 @@ import {
   updateWeekCandle
 } from "./candle-helper";
 
-import {chainlinkContracts} from "./contractsData"
+import {chainlinkContracts,currencies} from "./contractsData"
 
 export function handleAggregatorAnswerUpdated(event:AnswerUpdated):void {
 }
 
 export function handleBlock(block: ethereum.Block): void {
 
-  for (let i =0;i< chainlinkContracts.length;i++){
-    updatePrice(chainlinkContracts[i],block);
+  for (let i =0;i< currencies.length;i++){
+    let pair = currencies[i];
+    updatePrice(chainlinkContracts.get(pair),block);
   }
 
 }

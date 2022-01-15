@@ -60,13 +60,6 @@ type WeekPrice @entity {
     timestamp: BigInt!
 }
 
-type History @entity {
-    id: ID!
-    latestBlock: BigInt!
-    lastPrice: BigInt!
-    priceHistory: [Price!]!
-}
-
 type Price @entity {
     id: ID!
     timestamp: BigInt!

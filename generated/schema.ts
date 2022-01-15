@@ -174,7 +174,8 @@ export class Account extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("accouts", Value.fromBytesArray(new Array(0)));
+    this.set("account", Value.fromBytes(Bytes.empty()));
+    this.set("reges", Value.fromString(""));
   }
 
   save(): void {
@@ -203,42 +204,115 @@ export class Account extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get accouts(): Array<Bytes> {
-    let value = this.get("accouts");
-    return value!.toBytesArray();
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
   }
 
-  set accouts(value: Array<Bytes>) {
-    this.set("accouts", Value.fromBytesArray(value));
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get reges(): string {
+    let value = this.get("reges");
+    return value!.toString();
+  }
+
+  set reges(value: string) {
+    this.set("reges", Value.fromString(value));
   }
 }
 
-export class Portfolios extends Entity {
+export class RegisterMember extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("count", Value.fromBigInt(BigInt.zero()));
+    this.set("accountList", Value.fromStringArray(new Array(0)));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save RegisterMember entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save RegisterMember entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("RegisterMember", id.toString(), this);
+    }
+  }
+
+  static load(id: string): RegisterMember | null {
+    return changetype<RegisterMember | null>(store.get("RegisterMember", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get count(): BigInt {
+    let value = this.get("count");
+    return value!.toBigInt();
+  }
+
+  set count(value: BigInt) {
+    this.set("count", Value.fromBigInt(value));
+  }
+
+  get accountList(): Array<string> {
+    let value = this.get("accountList");
+    return value!.toStringArray();
+  }
+
+  set accountList(value: Array<string>) {
+    this.set("accountList", Value.fromStringArray(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+}
+
+export class Portfolio extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
 
     this.set("account", Value.fromBytes(Bytes.empty()));
     this.set("timstamp", Value.fromBigInt(BigInt.zero()));
-    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("zasset", Value.fromStringArray(new Array(0)));
   }
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save Portfolios entity without an ID");
+    assert(id != null, "Cannot save Portfolio entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save Portfolios entity with non-string ID. " +
+        "Cannot save Portfolio entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("Portfolios", id.toString(), this);
+      store.set("Portfolio", id.toString(), this);
     }
   }
 
-  static load(id: string): Portfolios | null {
-    return changetype<Portfolios | null>(store.get("Portfolios", id));
+  static load(id: string): Portfolio | null {
+    return changetype<Portfolio | null>(store.get("Portfolio", id));
   }
 
   get id(): string {
@@ -268,13 +342,13 @@ export class Portfolios extends Entity {
     this.set("timstamp", Value.fromBigInt(value));
   }
 
-  get amount(): BigInt {
+  get amount(): BigDecimal {
     let value = this.get("amount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
   }
 
   get zasset(): Array<string> {
@@ -292,9 +366,10 @@ export class ZAssetBalance extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("account", Value.fromBytes(Bytes.empty()));
     this.set("currencyKey", Value.fromString(""));
     this.set("balance", Value.fromBigInt(BigInt.zero()));
-    this.set("usdConvertBalance", Value.fromBigInt(BigInt.zero()));
+    this.set("usdConvertBalance", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("rate", Value.fromBigInt(BigInt.zero()));
     this.set("portfolios", Value.fromString(""));
   }
@@ -325,6 +400,15 @@ export class ZAssetBalance extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
   get currencyKey(): string {
     let value = this.get("currencyKey");
     return value!.toString();
@@ -343,13 +427,13 @@ export class ZAssetBalance extends Entity {
     this.set("balance", Value.fromBigInt(value));
   }
 
-  get usdConvertBalance(): BigInt {
+  get usdConvertBalance(): BigDecimal {
     let value = this.get("usdConvertBalance");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set usdConvertBalance(value: BigInt) {
-    this.set("usdConvertBalance", Value.fromBigInt(value));
+  set usdConvertBalance(value: BigDecimal) {
+    this.set("usdConvertBalance", Value.fromBigDecimal(value));
   }
 
   get rate(): BigInt {
@@ -378,8 +462,8 @@ export class OneHourPortFolio extends Entity {
 
     this.set("account", Value.fromBytes(Bytes.empty()));
     this.set("timstamp", Value.fromBigInt(BigInt.zero()));
-    this.set("amount", Value.fromBigInt(BigInt.zero()));
-    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("startAmount", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -428,22 +512,22 @@ export class OneHourPortFolio extends Entity {
     this.set("timstamp", Value.fromBigInt(value));
   }
 
-  get amount(): BigInt {
+  get amount(): BigDecimal {
     let value = this.get("amount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
   }
 
-  get startAmount(): BigInt {
+  get startAmount(): BigDecimal {
     let value = this.get("startAmount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set startAmount(value: BigInt) {
-    this.set("startAmount", Value.fromBigInt(value));
+  set startAmount(value: BigDecimal) {
+    this.set("startAmount", Value.fromBigDecimal(value));
   }
 }
 
@@ -454,8 +538,8 @@ export class OneDayPortFolio extends Entity {
 
     this.set("account", Value.fromBytes(Bytes.empty()));
     this.set("timstamp", Value.fromBigInt(BigInt.zero()));
-    this.set("amount", Value.fromBigInt(BigInt.zero()));
-    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("startAmount", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -502,22 +586,22 @@ export class OneDayPortFolio extends Entity {
     this.set("timstamp", Value.fromBigInt(value));
   }
 
-  get amount(): BigInt {
+  get amount(): BigDecimal {
     let value = this.get("amount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
   }
 
-  get startAmount(): BigInt {
+  get startAmount(): BigDecimal {
     let value = this.get("startAmount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set startAmount(value: BigInt) {
-    this.set("startAmount", Value.fromBigInt(value));
+  set startAmount(value: BigDecimal) {
+    this.set("startAmount", Value.fromBigDecimal(value));
   }
 }
 
@@ -528,8 +612,8 @@ export class WeekPortFolio extends Entity {
 
     this.set("account", Value.fromBytes(Bytes.empty()));
     this.set("timstamp", Value.fromBigInt(BigInt.zero()));
-    this.set("amount", Value.fromBigInt(BigInt.zero()));
-    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("startAmount", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -576,22 +660,22 @@ export class WeekPortFolio extends Entity {
     this.set("timstamp", Value.fromBigInt(value));
   }
 
-  get amount(): BigInt {
+  get amount(): BigDecimal {
     let value = this.get("amount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
   }
 
-  get startAmount(): BigInt {
+  get startAmount(): BigDecimal {
     let value = this.get("startAmount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set startAmount(value: BigInt) {
-    this.set("startAmount", Value.fromBigInt(value));
+  set startAmount(value: BigDecimal) {
+    this.set("startAmount", Value.fromBigDecimal(value));
   }
 }
 
@@ -602,8 +686,8 @@ export class MonthPortFolio extends Entity {
 
     this.set("account", Value.fromBytes(Bytes.empty()));
     this.set("timstamp", Value.fromBigInt(BigInt.zero()));
-    this.set("amount", Value.fromBigInt(BigInt.zero()));
-    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("startAmount", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -650,22 +734,22 @@ export class MonthPortFolio extends Entity {
     this.set("timstamp", Value.fromBigInt(value));
   }
 
-  get amount(): BigInt {
+  get amount(): BigDecimal {
     let value = this.get("amount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
   }
 
-  get startAmount(): BigInt {
+  get startAmount(): BigDecimal {
     let value = this.get("startAmount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set startAmount(value: BigInt) {
-    this.set("startAmount", Value.fromBigInt(value));
+  set startAmount(value: BigDecimal) {
+    this.set("startAmount", Value.fromBigDecimal(value));
   }
 }
 
@@ -676,8 +760,8 @@ export class YearPortFolio extends Entity {
 
     this.set("account", Value.fromBytes(Bytes.empty()));
     this.set("timstamp", Value.fromBigInt(BigInt.zero()));
-    this.set("amount", Value.fromBigInt(BigInt.zero()));
-    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("startAmount", Value.fromBigDecimal(BigDecimal.zero()));
   }
 
   save(): void {
@@ -724,21 +808,21 @@ export class YearPortFolio extends Entity {
     this.set("timstamp", Value.fromBigInt(value));
   }
 
-  get amount(): BigInt {
+  get amount(): BigDecimal {
     let value = this.get("amount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set amount(value: BigDecimal) {
+    this.set("amount", Value.fromBigDecimal(value));
   }
 
-  get startAmount(): BigInt {
+  get startAmount(): BigDecimal {
     let value = this.get("startAmount");
-    return value!.toBigInt();
+    return value!.toBigDecimal();
   }
 
-  set startAmount(value: BigInt) {
-    this.set("startAmount", Value.fromBigInt(value));
+  set startAmount(value: BigDecimal) {
+    this.set("startAmount", Value.fromBigDecimal(value));
   }
 }

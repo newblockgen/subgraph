@@ -16,62 +16,71 @@ type Transaction @entity{
 
 type Account @entity{
     id:ID!
-    accouts:[Bytes!]!
+    account: Bytes! #Address
+    reges:RegisterMember!
 }
 
-type Portfolios @entity{
+type RegisterMember @entity{
+    id:ID!
+    count:BigInt!
+    accountList: [Account!]!
+    timstamp:BigInt!
+}
+
+type Portfolio @entity{
     id:ID!
     account:Bytes!
     timstamp:BigInt!
-    amount:BigInt!
+    amount:BigDecimal!
     zasset:[ZAssetBalance!]!
 }
 
 type ZAssetBalance @entity{
     id:ID!
+    account:Bytes!
     currencyKey: String!
     balance: BigInt!
-    usdConvertBalance: BigInt!
+    usdConvertBalance: BigDecimal!
     rate:BigInt!
-    portfolios: Portfolios!
+    portfolios: Portfolio!
 }
 
 type OneHourPortFolio @entity{
     id:ID!
     account:Bytes!
     timstamp:BigInt!
-    amount:BigInt!
-    startAmount:BigInt!
+    amount:BigDecimal!
+    startAmount:BigDecimal!
 }
 
 type OneDayPortFolio @entity{
     id:ID!
     account:Bytes!
     timstamp:BigInt!
-    amount:BigInt!
-    startAmount:BigInt!
+    amount:BigDecimal!
+    startAmount:BigDecimal!
 }
 
 type WeekPortFolio @entity{
     id:ID!
     account:Bytes!
     timstamp:BigInt!
-    amount:BigInt!
-    startAmount:BigInt!
+    amount:BigDecimal!
+    startAmount:BigDecimal!
 }
 
 type MonthPortFolio @entity{
     id:ID!
     account:Bytes!
     timstamp:BigInt!
-    amount:BigInt!
-    startAmount:BigInt!
+    amount:BigDecimal!
+    startAmount:BigDecimal!
 }
 
 type YearPortFolio @entity{
     id:ID!
     account:Bytes!
     timstamp:BigInt!
-    amount:BigInt!
-    startAmount:BigInt!
+    amount:BigDecimal!
+    startAmount:BigDecimal!
 }
