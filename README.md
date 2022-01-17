@@ -94,6 +94,20 @@ For any of the eleven subgraphs: `snx`, `exchanges`, `rates`, `depot`, `loans`, 
     MonthPortFolio     #最近 30D 持币价值(USD)对比
     YearPortFolio      #最近 1Y 持币价值(USD)对比
    ```
-   
+  3).查询用户指定时间下某币种的持币情况
+  ```
+  
+{
+  zassetBalances(first:100,where:{currencyKey:"zETH",account:"",timstamp_lt:}){
+    id
+    currencyKey
+    balance
+    usdConvertBalance
+    rate
+  }
+ 
+  
+}
+  ```
    
  

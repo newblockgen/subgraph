@@ -371,6 +371,7 @@ export class ZAssetBalance extends Entity {
     this.set("balance", Value.fromBigInt(BigInt.zero()));
     this.set("usdConvertBalance", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("rate", Value.fromBigInt(BigInt.zero()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
     this.set("portfolios", Value.fromString(""));
   }
 
@@ -443,6 +444,15 @@ export class ZAssetBalance extends Entity {
 
   set rate(value: BigInt) {
     this.set("rate", Value.fromBigInt(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
   }
 
   get portfolios(): string {

@@ -42,7 +42,9 @@ type ZAssetBalance @entity{
     balance: BigInt!
     usdConvertBalance: BigDecimal!
     rate:BigInt!
+    timstamp:BigInt!
     portfolios: Portfolio!
+
 }
 
 type OneHourPortFolio @entity{

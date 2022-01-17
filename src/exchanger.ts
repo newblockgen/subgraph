@@ -111,6 +111,7 @@ function memberHistory(balace: BigInt, accountId: Bytes, block: ethereum.Block, 
   if (!zAssetBalanceBo) {
     zAssetBalanceBo = new ZAssetBalance(id);
   }
+  zAssetBalanceBo.timstamp = block.timestamp
   zAssetBalanceBo.account = accountId;
   zAssetBalanceBo.balance = balace;
   zAssetBalanceBo.currencyKey = pair;
