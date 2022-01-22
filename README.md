@@ -13,7 +13,10 @@ Synthetix has eleven bundled subgraps, all generated from this one repository:
    -- `testnet`:https://docs.chain.link/docs/binance-smart-chain-addresses
    
 2. **exchanger**: 交易对 交易记录 以及 用户指定币种的持币记录
-
+   bsc testnet :
+   -- Deployed to http://42.192.186.62:8000/subgraphs/name/synthetixio-team/synthetix/graphql
+   -- Queries (HTTP):     http://42.192.186.62:8000/subgraphs/name/synthetixio-team/synthetix
+   -- Subscriptions (WS): http://42.192.186.62:8001/subgraphs/name/synthetixio-team/synthetix
 
 
 ## 运行
@@ -109,5 +112,47 @@ For any of the eleven subgraphs: `snx`, `exchanges`, `rates`, `depot`, `loans`, 
   
 }
   ```
-   
+
+
+
+3、zsset币种
+
  
+  1).交易量
+  ```
+     zssetTradingVolFiveMinutes{  #五分钟交易量
+       id
+       currencyKey          #币种
+       startAmount          #开始时交易量
+       finalAmount          #五分钟内交易量
+       tradingTimes         #交易次数
+       fee                  #消耗的手续费（交易时消耗的自身币种）
+       timstamp             
+     }
+     zssetTradingVolFifteenMinutes # 15分钟币种交易量
+     zssetTradingVolOneHours       # 1h 
+     zssetTradingVolFourHours      # 4h
+     zssetTradingVolOneDays        # 1d
+     zssetTradingVolWeekly         # 1w
+  ```
+  
+  
+   2).币种排名
+      每个币种只有一条数据, 对应字段的排序需 调用者自行处理
+   ```
+   {  
+     coinIncreases{ 
+        id        
+        synth                 #币种
+        price                 #最新价格
+        bPrice                #24h前价格
+        increase              # 价格涨幅
+        timestamp             # 更新时间
+        volume                #24h 交易量
+        fee                   #24H 手续费
+        high                  #24H 最高价
+        low                   #24H 最低价
+        marketVal             #市值（USD）[发行量 * 当前价格]
+      }
+   }
+   ```

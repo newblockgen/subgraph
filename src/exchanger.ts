@@ -15,18 +15,20 @@ import {
   Synthetix
 } from "../generated/exchanger/Synthetix";
 import { Contract } from "../generated/exchanger/Contract";
+import { zssetValcolum,handleZssetTradingBlock } from "./ZssetTrading";
 
 import {
   token
 } from "../generated/exchanger/token";
 import { strToBytes } from "./common";
 
-import { Transaction,
+import {
+  Transaction,
   Account,
   RegisterMember,
   ZAssetBalance,
-  Portfolio ,
-  OneHourPortFolio,OneDayPortFolio,WeekPortFolio,MonthPortFolio,YearPortFolio
+  Portfolio,
+  OneHourPortFolio, OneDayPortFolio, WeekPortFolio, MonthPortFolio, YearPortFolio
 } from "../generated/schema";
 import { synthetixCurrencies, currencies, chainlinkContracts } from "./contractsData";
 
@@ -34,8 +36,8 @@ import { synthetixCurrencies, currencies, chainlinkContracts } from "./contracts
 export function handleBlock(block: ethereum.Block): void {
   let address = dataSource.address();
   let time = block.timestamp;
-  if ((time.mod(BigInt.fromI32(3600))) > BigInt.fromI32(5)){
-    log.info("time is not used {}",[time.mod(BigInt.fromI32(3600)).toString()]);
+  if ((time.mod(BigInt.fromI32(3600))) > BigInt.fromI32(5)) {
+    log.info("time is not used {}", [time.mod(BigInt.fromI32(3600)).toString()]);
     return;
   }
   let accounts = RegisterMember.load(address.toHex() + "-account");
@@ -47,14 +49,17 @@ export function handleBlock(block: ethereum.Block): void {
       currencyPrice.set(pair, price);
     }
     let accountArray = accounts.accountList;
+    log.info("accountArray:{}",[accountArray.length.toString()])
     for (let i = 0; i < accountArray.length; i++) {
       let accountId = accountArray[i];
       let account = Account.load(accountId);
+      log.info("accountArray: account{}",[accountId])
       if (account) {
         memberTokenBalance(account.account, block, currencyPrice);
       }
     }
   }
+  handleZssetTradingBlock(block);
 }
 
 //统计用户余额
@@ -83,11 +88,11 @@ function memberTokenBalance(accountId: Bytes, block: ethereum.Block, priceCurrcy
   updateOneDayPortFolio(portfolio);
   updateWeekPortFolio(portfolio);
   updateMonthPortFolio(portfolio);
-  updateYearPortFolio(portfolio)
+  updateYearPortFolio(portfolio);
 }
 
 //查询chinlink 币对价格
-function getCurrecyPrice(pair: string):  BigDecimal[]{
+function getCurrecyPrice(pair: string): BigDecimal[] {
   let address = chainlinkContracts.get(pair);
   let oracle = Contract.bind(Address.fromString(address));
   let callResult = oracle.try_latestAnswer();
@@ -100,8 +105,8 @@ function getCurrecyPrice(pair: string):  BigDecimal[]{
   }
   let dex = (10 ** BigInt.fromI64(decimail.value).toI64()).toString();
 
-  let price = callResult.value.divDecimal(BigDecimal.fromString(dex))
-  return [callResult.value.toBigDecimal(),price];
+  let price = callResult.value.divDecimal(BigDecimal.fromString(dex));
+  return [callResult.value.toBigDecimal(), price];
 }
 
 //添加用户币对历史
@@ -111,11 +116,11 @@ function memberHistory(balace: BigInt, accountId: Bytes, block: ethereum.Block, 
   if (!zAssetBalanceBo) {
     zAssetBalanceBo = new ZAssetBalance(id);
   }
-  zAssetBalanceBo.timstamp = block.timestamp
+  zAssetBalanceBo.timstamp = block.timestamp;
   zAssetBalanceBo.account = accountId;
   zAssetBalanceBo.balance = balace;
   zAssetBalanceBo.currencyKey = pair;
-  zAssetBalanceBo.rate =BigInt.fromString(priceCurrcy.get(pair)[0].toString());
+  zAssetBalanceBo.rate = BigInt.fromString(priceCurrcy.get(pair)[0].toString());
   let balances = balace.divDecimal(BigInt.fromI32(10).pow(18).toBigDecimal());
   zAssetBalanceBo.usdConvertBalance = balances.times(priceCurrcy.get(pair)[1]).truncate(2);
   zAssetBalanceBo.save();
@@ -133,9 +138,10 @@ function loadBalance(pairAddress: string, account: Bytes): BigInt[] {
   if (decimail.reverted) {
     log.warning("Get Latest price reverted at block: {}", [account.toHex()]);
   }
-  let bigDecimail = BigInt.fromI32(decimail.value)
+  let bigDecimail = BigInt.fromI32(decimail.value);
   return [balancetr.value, bigDecimail];
 }
+
 //交易记录
 export function handleExchangeTracking(event: ExchangeTracking): void {
   let transaction = Transaction.load(event.transaction.hash.toHexString());
@@ -176,6 +182,7 @@ export function handleOwnerNominated(event: OwnerNominated): void {
 export function handleProxyUpdated(event: ProxyUpdated): void {
   log.info("log in handleProxyUpdated", []);
 }
+
 //交易记录
 export function handleSynthExchange(event: SynthExchange): void {
   let trans = Transaction.load(event.transaction.hash.toHexString());
@@ -193,8 +200,9 @@ export function handleSynthExchange(event: SynthExchange): void {
   trans.timstamp = event.block.timestamp;
   trans.save();
   addAccount(trans.account, event.block);
-
+  zssetValcolum(trans);
 }
+
 // 凡是交易过的用户都添加监听
 function addAccount(account: Bytes, block: ethereum.Block): void {
   let accounts = RegisterMember.load(dataSource.address().toHex() + "-account");
@@ -227,144 +235,145 @@ export function handleTransaction(event: Transfer): void {
 }
 
 // 用户每小时余额持币对比
-function updateOneHourPortFolio(portfolio:Portfolio):void{
-  let time = BigInt.fromI32(60*60)
-  let id = portfolio.account.toHexString()+"-"+ time.toString();
+function updateOneHourPortFolio(portfolio: Portfolio): void {
+  let time = BigInt.fromI32(60 * 60);
+  let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = OneHourPortFolio.load(id);
-  if (!portBo){
+  if (!portBo) {
     portBo = new OneHourPortFolio(id);
-    portBo.account = portfolio.account
-    portBo.timstamp = portfolio.timstamp
+    portBo.account = portfolio.account;
+    portBo.timstamp = portfolio.timstamp;
     portBo.amount = portfolio.amount;
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account
-  portBo.timstamp = portfolio.timstamp
+  portBo.account = portfolio.account;
+  portBo.timstamp = portfolio.timstamp;
   let beforAmount = portfolio.amount;
   let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo =  Portfolio.load(portfolio.account.toHexString()+"-"+beforTime.toString());
-  if(beforPorfolioBo){
+  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
+  if (beforPorfolioBo) {
     portBo.startAmount = beforPorfolioBo.amount;
-  }else{
-    portBo.startAmount =beforAmount;
+  } else {
+    portBo.startAmount = beforAmount;
   }
   portBo.amount = portfolio.amount;
-  portBo.save()
+  portBo.save();
 
 }
+
 // 用户最近1天余额持币对比
-function updateOneDayPortFolio(portfolio:Portfolio):void{
-  let time = BigInt.fromI32(60*60*24)
-  let id = portfolio.account.toHexString()+"-"+ time.toString();
+function updateOneDayPortFolio(portfolio: Portfolio): void {
+  let time = BigInt.fromI32(60 * 60 * 24);
+  let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = OneDayPortFolio.load(id);
-  if (!portBo){
+  if (!portBo) {
     portBo = new OneDayPortFolio(id);
-    portBo.account = portfolio.account
-    portBo.timstamp = portfolio.timstamp
+    portBo.account = portfolio.account;
+    portBo.timstamp = portfolio.timstamp;
     portBo.amount = portfolio.amount;
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account
-  portBo.timstamp = portfolio.timstamp
+  portBo.account = portfolio.account;
+  portBo.timstamp = portfolio.timstamp;
 
   let beforAmount = portfolio.amount;
   let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo =  Portfolio.load(portfolio.account.toHexString()+"-"+beforTime.toString());
-  if(beforPorfolioBo){
+  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
+  if (beforPorfolioBo) {
     portBo.startAmount = beforPorfolioBo.amount;
-  }else{
-    portBo.startAmount =beforAmount;
+  } else {
+    portBo.startAmount = beforAmount;
   }
   portBo.amount = portfolio.amount;
-  portBo.save()
+  portBo.save();
 }
 
 // 用户最近1周余额持币对比
-function updateWeekPortFolio(portfolio:Portfolio):void{
-  let time = BigInt.fromI32(60*60*24*7)
-  let id = portfolio.account.toHexString()+"-"+time.toString();
+function updateWeekPortFolio(portfolio: Portfolio): void {
+  let time = BigInt.fromI32(60 * 60 * 24 * 7);
+  let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = WeekPortFolio.load(id);
-  if (!portBo){
+  if (!portBo) {
     portBo = new WeekPortFolio(id);
-    portBo.account = portfolio.account
-    portBo.timstamp = portfolio.timstamp
+    portBo.account = portfolio.account;
+    portBo.timstamp = portfolio.timstamp;
     portBo.amount = portfolio.amount;
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account
-  portBo.timstamp = portfolio.timstamp
+  portBo.account = portfolio.account;
+  portBo.timstamp = portfolio.timstamp;
   let beforAmount = portfolio.amount;
   let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo =  Portfolio.load(portfolio.account.toHexString()+"-"+beforTime.toString());
-  if(beforPorfolioBo){
+  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
+  if (beforPorfolioBo) {
     portBo.startAmount = beforPorfolioBo.amount;
-  }else{
-    portBo.startAmount =beforAmount;
+  } else {
+    portBo.startAmount = beforAmount;
   }
   portBo.amount = portfolio.amount;
-  portBo.save()
+  portBo.save();
 }
 
 
 // 用户最近一个月余额持币对比
-function updateMonthPortFolio(portfolio:Portfolio):void{
-  let time = BigInt.fromI32(60*60*24*30)
-  let id = portfolio.account.toHexString()+"-"+ time.toString();
+function updateMonthPortFolio(portfolio: Portfolio): void {
+  let time = BigInt.fromI32(60 * 60 * 24 * 30);
+  let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = MonthPortFolio.load(id);
-  if (!portBo){
+  if (!portBo) {
     portBo = new MonthPortFolio(id);
-    portBo.account = portfolio.account
-    portBo.timstamp = portfolio.timstamp
+    portBo.account = portfolio.account;
+    portBo.timstamp = portfolio.timstamp;
     portBo.amount = portfolio.amount;
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account
-  portBo.timstamp = portfolio.timstamp
+  portBo.account = portfolio.account;
+  portBo.timstamp = portfolio.timstamp;
   let beforAmount = portfolio.amount;
   let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo =  Portfolio.load(portfolio.account.toHexString()+"-"+beforTime.toString());
-  if(beforPorfolioBo){
+  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
+  if (beforPorfolioBo) {
     portBo.startAmount = beforPorfolioBo.amount;
-  }else{
-    portBo.startAmount =beforAmount;
+  } else {
+    portBo.startAmount = beforAmount;
   }
   portBo.amount = portfolio.amount;
-  portBo.save()
+  portBo.save();
 
 }
 
 // 用户最近1年余额持币对比
-function updateYearPortFolio(portfolio:Portfolio):void{
-  let time = BigInt.fromI32(60*60*24*365)
-  let id = portfolio.account.toHexString()+"-"+ time.toString();
+function updateYearPortFolio(portfolio: Portfolio): void {
+  let time = BigInt.fromI32(60 * 60 * 24 * 365);
+  let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = YearPortFolio.load(id);
-  if (!portBo){
+  if (!portBo) {
     portBo = new YearPortFolio(id);
-    portBo.account = portfolio.account
-    portBo.timstamp = portfolio.timstamp
+    portBo.account = portfolio.account;
+    portBo.timstamp = portfolio.timstamp;
     portBo.amount = portfolio.amount;
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account
-  portBo.timstamp = portfolio.timstamp
+  portBo.account = portfolio.account;
+  portBo.timstamp = portfolio.timstamp;
   let beforAmount = portfolio.amount;
   let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo =  Portfolio.load(portfolio.account.toHexString()+"-"+beforTime.toString());
-  if(beforPorfolioBo){
+  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
+  if (beforPorfolioBo) {
     portBo.startAmount = beforPorfolioBo.amount;
-  }else{
-    portBo.startAmount =beforAmount;
+  } else {
+    portBo.startAmount = beforAmount;
   }
   portBo.amount = portfolio.amount;
-  portBo.save()
+  portBo.save();
 }

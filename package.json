@@ -23,13 +23,13 @@
 
 
     "deploy": "graph deploy --node  https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ allenhyfay/sugmrm",
-    "deploybsc": "graph deploy --node http://192.168.6.249:8020/ --ipfs http://192.168.6.249:5001 synthetixio-team/synthetix",
+    "deploybsc": "graph deploy --node http://42.192.186.62:8020/ --ipfs http://42.192.186.62:5001 synthetixio-team/synthetix",
     "deploy:chainlink": "npm run deploy -- subgraphs/synthetix-chainlink.yaml",
     "deploy:exchanger": "npm run deploybsc -- subgraphs/synthetix-exchanger.yaml",
 
-    "create-local": "graph create --node http://192.168.6.249:8020/ synthetixio-team/synthetix",
-    "remove-local": "graph remove --node http://192.168.6.249:8020/ synthetixio-team/synthetix",
-    "deploy-local": "graph deploy --node http://192.168.6.249:8020/ --ipfs http://192.168.6.249:5001 synthetixio-team/synthetix"
+    "create-local": "graph create --node http://42.192.186.62:8020/ synthetixio-team/synthetix",
+    "remove-local": "graph remove --node http://142.192.186.62:8020/ synthetixio-team/synthetix",
+    "deploy-local": "graph deploy --node http://172.28.183.87:8020/ --ipfs http://192.168.6.249:5001 synthetixio-team/synthetix"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.25.1",
