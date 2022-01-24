@@ -836,3 +836,919 @@ export class YearPortFolio extends Entity {
     this.set("startAmount", Value.fromBigDecimal(value));
   }
 }
+
+export class CoinIncrease extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("synth", Value.fromString(""));
+    this.set("price", Value.fromBigInt(BigInt.zero()));
+    this.set("bPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("increase", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("volume", Value.fromBigInt(BigInt.zero()));
+    this.set("fee", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("high", Value.fromBigInt(BigInt.zero()));
+    this.set("low", Value.fromBigInt(BigInt.zero()));
+    this.set("marketVal", Value.fromBigDecimal(BigDecimal.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CoinIncrease entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save CoinIncrease entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("CoinIncrease", id.toString(), this);
+    }
+  }
+
+  static load(id: string): CoinIncrease | null {
+    return changetype<CoinIncrease | null>(store.get("CoinIncrease", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get synth(): string {
+    let value = this.get("synth");
+    return value!.toString();
+  }
+
+  set synth(value: string) {
+    this.set("synth", Value.fromString(value));
+  }
+
+  get price(): BigInt {
+    let value = this.get("price");
+    return value!.toBigInt();
+  }
+
+  set price(value: BigInt) {
+    this.set("price", Value.fromBigInt(value));
+  }
+
+  get bPrice(): BigInt {
+    let value = this.get("bPrice");
+    return value!.toBigInt();
+  }
+
+  set bPrice(value: BigInt) {
+    this.set("bPrice", Value.fromBigInt(value));
+  }
+
+  get increase(): BigDecimal {
+    let value = this.get("increase");
+    return value!.toBigDecimal();
+  }
+
+  set increase(value: BigDecimal) {
+    this.set("increase", Value.fromBigDecimal(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get volume(): BigInt {
+    let value = this.get("volume");
+    return value!.toBigInt();
+  }
+
+  set volume(value: BigInt) {
+    this.set("volume", Value.fromBigInt(value));
+  }
+
+  get fee(): BigDecimal {
+    let value = this.get("fee");
+    return value!.toBigDecimal();
+  }
+
+  set fee(value: BigDecimal) {
+    this.set("fee", Value.fromBigDecimal(value));
+  }
+
+  get high(): BigInt {
+    let value = this.get("high");
+    return value!.toBigInt();
+  }
+
+  set high(value: BigInt) {
+    this.set("high", Value.fromBigInt(value));
+  }
+
+  get low(): BigInt {
+    let value = this.get("low");
+    return value!.toBigInt();
+  }
+
+  set low(value: BigInt) {
+    this.set("low", Value.fromBigInt(value));
+  }
+
+  get marketVal(): BigDecimal {
+    let value = this.get("marketVal");
+    return value!.toBigDecimal();
+  }
+
+  set marketVal(value: BigDecimal) {
+    this.set("marketVal", Value.fromBigDecimal(value));
+  }
+}
+
+export class ZssetTradingVolOneDay extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("currencyKey", Value.fromString(""));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("finalAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("tradingTimes", Value.fromBigInt(BigInt.zero()));
+    this.set("fee", Value.fromBigInt(BigInt.zero()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save ZssetTradingVolOneDay entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ZssetTradingVolOneDay entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ZssetTradingVolOneDay", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ZssetTradingVolOneDay | null {
+    return changetype<ZssetTradingVolOneDay | null>(
+      store.get("ZssetTradingVolOneDay", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currencyKey(): string {
+    let value = this.get("currencyKey");
+    return value!.toString();
+  }
+
+  set currencyKey(value: string) {
+    this.set("currencyKey", Value.fromString(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+
+  get finalAmount(): BigInt {
+    let value = this.get("finalAmount");
+    return value!.toBigInt();
+  }
+
+  set finalAmount(value: BigInt) {
+    this.set("finalAmount", Value.fromBigInt(value));
+  }
+
+  get tradingTimes(): BigInt {
+    let value = this.get("tradingTimes");
+    return value!.toBigInt();
+  }
+
+  set tradingTimes(value: BigInt) {
+    this.set("tradingTimes", Value.fromBigInt(value));
+  }
+
+  get fee(): BigInt {
+    let value = this.get("fee");
+    return value!.toBigInt();
+  }
+
+  set fee(value: BigInt) {
+    this.set("fee", Value.fromBigInt(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+}
+
+export class ZssetTradingVolFiveMinute extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("currencyKey", Value.fromString(""));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("finalAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("tradingTimes", Value.fromBigInt(BigInt.zero()));
+    this.set("fee", Value.fromBigInt(BigInt.zero()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save ZssetTradingVolFiveMinute entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ZssetTradingVolFiveMinute entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ZssetTradingVolFiveMinute", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ZssetTradingVolFiveMinute | null {
+    return changetype<ZssetTradingVolFiveMinute | null>(
+      store.get("ZssetTradingVolFiveMinute", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currencyKey(): string {
+    let value = this.get("currencyKey");
+    return value!.toString();
+  }
+
+  set currencyKey(value: string) {
+    this.set("currencyKey", Value.fromString(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+
+  get finalAmount(): BigInt {
+    let value = this.get("finalAmount");
+    return value!.toBigInt();
+  }
+
+  set finalAmount(value: BigInt) {
+    this.set("finalAmount", Value.fromBigInt(value));
+  }
+
+  get tradingTimes(): BigInt {
+    let value = this.get("tradingTimes");
+    return value!.toBigInt();
+  }
+
+  set tradingTimes(value: BigInt) {
+    this.set("tradingTimes", Value.fromBigInt(value));
+  }
+
+  get fee(): BigInt {
+    let value = this.get("fee");
+    return value!.toBigInt();
+  }
+
+  set fee(value: BigInt) {
+    this.set("fee", Value.fromBigInt(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+}
+
+export class ZssetTradingVolFifteenMinute extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("currencyKey", Value.fromString(""));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("finalAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("tradingTimes", Value.fromBigInt(BigInt.zero()));
+    this.set("fee", Value.fromBigInt(BigInt.zero()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save ZssetTradingVolFifteenMinute entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ZssetTradingVolFifteenMinute entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ZssetTradingVolFifteenMinute", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ZssetTradingVolFifteenMinute | null {
+    return changetype<ZssetTradingVolFifteenMinute | null>(
+      store.get("ZssetTradingVolFifteenMinute", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currencyKey(): string {
+    let value = this.get("currencyKey");
+    return value!.toString();
+  }
+
+  set currencyKey(value: string) {
+    this.set("currencyKey", Value.fromString(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+
+  get finalAmount(): BigInt {
+    let value = this.get("finalAmount");
+    return value!.toBigInt();
+  }
+
+  set finalAmount(value: BigInt) {
+    this.set("finalAmount", Value.fromBigInt(value));
+  }
+
+  get tradingTimes(): BigInt {
+    let value = this.get("tradingTimes");
+    return value!.toBigInt();
+  }
+
+  set tradingTimes(value: BigInt) {
+    this.set("tradingTimes", Value.fromBigInt(value));
+  }
+
+  get fee(): BigInt {
+    let value = this.get("fee");
+    return value!.toBigInt();
+  }
+
+  set fee(value: BigInt) {
+    this.set("fee", Value.fromBigInt(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+}
+
+export class ZssetTradingVolOneHour extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("currencyKey", Value.fromString(""));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("finalAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("tradingTimes", Value.fromBigInt(BigInt.zero()));
+    this.set("fee", Value.fromBigInt(BigInt.zero()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save ZssetTradingVolOneHour entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ZssetTradingVolOneHour entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ZssetTradingVolOneHour", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ZssetTradingVolOneHour | null {
+    return changetype<ZssetTradingVolOneHour | null>(
+      store.get("ZssetTradingVolOneHour", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currencyKey(): string {
+    let value = this.get("currencyKey");
+    return value!.toString();
+  }
+
+  set currencyKey(value: string) {
+    this.set("currencyKey", Value.fromString(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+
+  get finalAmount(): BigInt {
+    let value = this.get("finalAmount");
+    return value!.toBigInt();
+  }
+
+  set finalAmount(value: BigInt) {
+    this.set("finalAmount", Value.fromBigInt(value));
+  }
+
+  get tradingTimes(): BigInt {
+    let value = this.get("tradingTimes");
+    return value!.toBigInt();
+  }
+
+  set tradingTimes(value: BigInt) {
+    this.set("tradingTimes", Value.fromBigInt(value));
+  }
+
+  get fee(): BigInt {
+    let value = this.get("fee");
+    return value!.toBigInt();
+  }
+
+  set fee(value: BigInt) {
+    this.set("fee", Value.fromBigInt(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+}
+
+export class ZssetTradingVolFourHour extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("currencyKey", Value.fromString(""));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("finalAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("tradingTimes", Value.fromBigInt(BigInt.zero()));
+    this.set("fee", Value.fromBigInt(BigInt.zero()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save ZssetTradingVolFourHour entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ZssetTradingVolFourHour entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ZssetTradingVolFourHour", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ZssetTradingVolFourHour | null {
+    return changetype<ZssetTradingVolFourHour | null>(
+      store.get("ZssetTradingVolFourHour", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currencyKey(): string {
+    let value = this.get("currencyKey");
+    return value!.toString();
+  }
+
+  set currencyKey(value: string) {
+    this.set("currencyKey", Value.fromString(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+
+  get finalAmount(): BigInt {
+    let value = this.get("finalAmount");
+    return value!.toBigInt();
+  }
+
+  set finalAmount(value: BigInt) {
+    this.set("finalAmount", Value.fromBigInt(value));
+  }
+
+  get tradingTimes(): BigInt {
+    let value = this.get("tradingTimes");
+    return value!.toBigInt();
+  }
+
+  set tradingTimes(value: BigInt) {
+    this.set("tradingTimes", Value.fromBigInt(value));
+  }
+
+  get fee(): BigInt {
+    let value = this.get("fee");
+    return value!.toBigInt();
+  }
+
+  set fee(value: BigInt) {
+    this.set("fee", Value.fromBigInt(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+}
+
+export class ZssetTradingVolWeekly extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("currencyKey", Value.fromString(""));
+    this.set("startAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("finalAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("tradingTimes", Value.fromBigInt(BigInt.zero()));
+    this.set("fee", Value.fromBigInt(BigInt.zero()));
+    this.set("timstamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save ZssetTradingVolWeekly entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ZssetTradingVolWeekly entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ZssetTradingVolWeekly", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ZssetTradingVolWeekly | null {
+    return changetype<ZssetTradingVolWeekly | null>(
+      store.get("ZssetTradingVolWeekly", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currencyKey(): string {
+    let value = this.get("currencyKey");
+    return value!.toString();
+  }
+
+  set currencyKey(value: string) {
+    this.set("currencyKey", Value.fromString(value));
+  }
+
+  get startAmount(): BigInt {
+    let value = this.get("startAmount");
+    return value!.toBigInt();
+  }
+
+  set startAmount(value: BigInt) {
+    this.set("startAmount", Value.fromBigInt(value));
+  }
+
+  get finalAmount(): BigInt {
+    let value = this.get("finalAmount");
+    return value!.toBigInt();
+  }
+
+  set finalAmount(value: BigInt) {
+    this.set("finalAmount", Value.fromBigInt(value));
+  }
+
+  get tradingTimes(): BigInt {
+    let value = this.get("tradingTimes");
+    return value!.toBigInt();
+  }
+
+  set tradingTimes(value: BigInt) {
+    this.set("tradingTimes", Value.fromBigInt(value));
+  }
+
+  get fee(): BigInt {
+    let value = this.get("fee");
+    return value!.toBigInt();
+  }
+
+  set fee(value: BigInt) {
+    this.set("fee", Value.fromBigInt(value));
+  }
+
+  get timstamp(): BigInt {
+    let value = this.get("timstamp");
+    return value!.toBigInt();
+  }
+
+  set timstamp(value: BigInt) {
+    this.set("timstamp", Value.fromBigInt(value));
+  }
+}
+
+export class DailyCandle extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("synth", Value.fromString(""));
+    this.set("open", Value.fromBigInt(BigInt.zero()));
+    this.set("high", Value.fromBigInt(BigInt.zero()));
+    this.set("low", Value.fromBigInt(BigInt.zero()));
+    this.set("close", Value.fromBigInt(BigInt.zero()));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save DailyCandle entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save DailyCandle entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("DailyCandle", id.toString(), this);
+    }
+  }
+
+  static load(id: string): DailyCandle | null {
+    return changetype<DailyCandle | null>(store.get("DailyCandle", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get synth(): string {
+    let value = this.get("synth");
+    return value!.toString();
+  }
+
+  set synth(value: string) {
+    this.set("synth", Value.fromString(value));
+  }
+
+  get open(): BigInt {
+    let value = this.get("open");
+    return value!.toBigInt();
+  }
+
+  set open(value: BigInt) {
+    this.set("open", Value.fromBigInt(value));
+  }
+
+  get high(): BigInt {
+    let value = this.get("high");
+    return value!.toBigInt();
+  }
+
+  set high(value: BigInt) {
+    this.set("high", Value.fromBigInt(value));
+  }
+
+  get low(): BigInt {
+    let value = this.get("low");
+    return value!.toBigInt();
+  }
+
+  set low(value: BigInt) {
+    this.set("low", Value.fromBigInt(value));
+  }
+
+  get close(): BigInt {
+    let value = this.get("close");
+    return value!.toBigInt();
+  }
+
+  set close(value: BigInt) {
+    this.set("close", Value.fromBigInt(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+}
+
+export class FiveMinutePrice extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("synth", Value.fromString(""));
+    this.set("open", Value.fromBigInt(BigInt.zero()));
+    this.set("high", Value.fromBigInt(BigInt.zero()));
+    this.set("low", Value.fromBigInt(BigInt.zero()));
+    this.set("close", Value.fromBigInt(BigInt.zero()));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save FiveMinutePrice entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save FiveMinutePrice entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("FiveMinutePrice", id.toString(), this);
+    }
+  }
+
+  static load(id: string): FiveMinutePrice | null {
+    return changetype<FiveMinutePrice | null>(store.get("FiveMinutePrice", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get synth(): string {
+    let value = this.get("synth");
+    return value!.toString();
+  }
+
+  set synth(value: string) {
+    this.set("synth", Value.fromString(value));
+  }
+
+  get open(): BigInt {
+    let value = this.get("open");
+    return value!.toBigInt();
+  }
+
+  set open(value: BigInt) {
+    this.set("open", Value.fromBigInt(value));
+  }
+
+  get high(): BigInt {
+    let value = this.get("high");
+    return value!.toBigInt();
+  }
+
+  set high(value: BigInt) {
+    this.set("high", Value.fromBigInt(value));
+  }
+
+  get low(): BigInt {
+    let value = this.get("low");
+    return value!.toBigInt();
+  }
+
+  set low(value: BigInt) {
+    this.set("low", Value.fromBigInt(value));
+  }
+
+  get close(): BigInt {
+    let value = this.get("close");
+    return value!.toBigInt();
+  }
+
+  set close(value: BigInt) {
+    this.set("close", Value.fromBigInt(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+}
