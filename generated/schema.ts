@@ -11,6 +11,132 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
+export class ExchangeEntrySettled extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("from", Value.fromBytes(Bytes.empty()));
+    this.set("src", Value.fromBytes(Bytes.empty()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("dest", Value.fromBytes(Bytes.empty()));
+    this.set("reclaim", Value.fromBigInt(BigInt.zero()));
+    this.set("rebate", Value.fromBigInt(BigInt.zero()));
+    this.set("srcRoundIdAtPeriodEnd", Value.fromBigInt(BigInt.zero()));
+    this.set("destRoundIdAtPeriodEnd", Value.fromBigInt(BigInt.zero()));
+    this.set("exchangeTimestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save ExchangeEntrySettled entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ExchangeEntrySettled entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ExchangeEntrySettled", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ExchangeEntrySettled | null {
+    return changetype<ExchangeEntrySettled | null>(
+      store.get("ExchangeEntrySettled", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get from(): Bytes {
+    let value = this.get("from");
+    return value!.toBytes();
+  }
+
+  set from(value: Bytes) {
+    this.set("from", Value.fromBytes(value));
+  }
+
+  get src(): Bytes {
+    let value = this.get("src");
+    return value!.toBytes();
+  }
+
+  set src(value: Bytes) {
+    this.set("src", Value.fromBytes(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get dest(): Bytes {
+    let value = this.get("dest");
+    return value!.toBytes();
+  }
+
+  set dest(value: Bytes) {
+    this.set("dest", Value.fromBytes(value));
+  }
+
+  get reclaim(): BigInt {
+    let value = this.get("reclaim");
+    return value!.toBigInt();
+  }
+
+  set reclaim(value: BigInt) {
+    this.set("reclaim", Value.fromBigInt(value));
+  }
+
+  get rebate(): BigInt {
+    let value = this.get("rebate");
+    return value!.toBigInt();
+  }
+
+  set rebate(value: BigInt) {
+    this.set("rebate", Value.fromBigInt(value));
+  }
+
+  get srcRoundIdAtPeriodEnd(): BigInt {
+    let value = this.get("srcRoundIdAtPeriodEnd");
+    return value!.toBigInt();
+  }
+
+  set srcRoundIdAtPeriodEnd(value: BigInt) {
+    this.set("srcRoundIdAtPeriodEnd", Value.fromBigInt(value));
+  }
+
+  get destRoundIdAtPeriodEnd(): BigInt {
+    let value = this.get("destRoundIdAtPeriodEnd");
+    return value!.toBigInt();
+  }
+
+  set destRoundIdAtPeriodEnd(value: BigInt) {
+    this.set("destRoundIdAtPeriodEnd", Value.fromBigInt(value));
+  }
+
+  get exchangeTimestamp(): BigInt {
+    let value = this.get("exchangeTimestamp");
+    return value!.toBigInt();
+  }
+
+  set exchangeTimestamp(value: BigInt) {
+    this.set("exchangeTimestamp", Value.fromBigInt(value));
+  }
+}
+
 export class Transaction extends Entity {
   constructor(id: string) {
     super();

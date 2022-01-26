@@ -39,7 +39,6 @@ function updatePrice(contractAddress:string ,block: ethereum.Block) :void {
   if(callResult.reverted){
     log.warning("Get Latest price reverted at block: {}", [block.number.toString()])
   }
-  log.info("contract address: {}",[oracle._address.toString()])
   //Add data onto Price
   price.timestamp = block.timestamp
   price.blockNumber = block.number
