@@ -1,4 +1,18 @@
 # RatesUpdated tracks this event from the ExchangeRates.sol contract
+type ExchangeEntrySettled @entity {
+    id: ID!
+    from: Bytes!
+    src: Bytes!
+    amount: BigInt!
+    dest: Bytes!
+    reclaim: BigInt!
+    rebate: BigInt!
+    srcRoundIdAtPeriodEnd: BigInt!
+    destRoundIdAtPeriodEnd: BigInt!
+    exchangeTimestamp: BigInt!
+}
+
+
 type Transaction @entity{
     id:ID!
     transactionHash:Bytes!

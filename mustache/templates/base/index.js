@@ -4,7 +4,7 @@ module.exports = {
       specVersion: '0.0.2',
       repository: 'https://github.com/Synthetixio/synthetix-subgraph',
       dataSourceKind: 'ethereum/contract',
-      network: 'bsc',
+      network: 'bsctest',
       mapping: {
         kind: 'ethereum/events',
         version: '0.0.5',

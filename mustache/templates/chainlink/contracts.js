@@ -1,9 +1,9 @@
 module.exports = [
   {
-    prod: 14297010,
+    prod: 15861371,
     test: null,
     type: 'chainlink',
     name: 'chainlink',
-    address: "'0x264990fbd0a4796a3e3d8e37c4d5f87a3aca5ebf'",
+    address: "'0xd582733b8ce3b84fcfad9373626c89c7d5606e30'",
   }
 ];

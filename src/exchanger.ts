@@ -37,7 +37,6 @@ export function handleBlock(block: ethereum.Block): void {
   let address = dataSource.address();
   let time = block.timestamp;
   if ((time.mod(BigInt.fromI32(3600))) > BigInt.fromI32(5)) {
-    log.info("time is not used {}", [time.mod(BigInt.fromI32(3600)).toString()]);
     return;
   }
   let accounts = RegisterMember.load(address.toHex() + "-account");
@@ -93,19 +92,22 @@ function memberTokenBalance(accountId: Bytes, block: ethereum.Block, priceCurrcy
 
 //查询chinlink 币对价格
 function getCurrecyPrice(pair: string): BigDecimal[] {
+  log.info("current pair is {}",[pair]);
   let address = chainlinkContracts.get(pair);
   let oracle = Contract.bind(Address.fromString(address));
   let callResult = oracle.try_latestAnswer();
   let decimail = oracle.try_decimals();
   if (callResult.reverted) {
-    log.info("Get Latest price reverted at pair", [pair]);
+    log.info("Get Latest price reverted at pair {}", [pair]);
+    return [BigDecimal.zero(),BigDecimal.zero()];
   }
   if (decimail.reverted) {
-    log.warning("Get Latest price reverted at block: {}", [pair]);
+    log.info("Get Latest price reverted at block: {}", [pair]);
   }
   let dex = (10 ** BigInt.fromI64(decimail.value).toI64()).toString();
 
   let price = callResult.value.divDecimal(BigDecimal.fromString(dex));
+  log.info("{} price is {}",[pair,price.toString()]);
   return [callResult.value.toBigDecimal(), price];
 }
 

@@ -29,7 +29,8 @@ function updatePrice(contractAddress: string, block: ethereum.Block, pair: strin
   let callResult = oracle.try_latestAnswer();
   let decimail = oracle.try_decimals();
   if (callResult.reverted) {
-    log.info("Get Latest price reverted at pair", [pair]);
+    log.info("Get Latest price reverted at pair {}", [pair]);
+    return;
   }
   if (decimail.reverted) {
     log.warning("Get Latest price reverted at block: {}", [pair]);
@@ -180,7 +181,8 @@ function coinTotalSupply(coin: string): BigDecimal {
   let totalSupply = coinContract.try_totalSupply();
   let decimail = coinContract.try_decimals();
   if (totalSupply.reverted) {
-    log.info("Get Latest price reverted at pair", []);
+    log.info("Get Latest price reverted at pair {}", [coin]);
+    return BigDecimal.zero();
   }
   if (decimail.reverted) {
     log.warning("Get Latest price reverted at block: {}", []);

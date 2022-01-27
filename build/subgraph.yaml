@@ -1,61 +1,35 @@
 specVersion: 0.0.2
-description: exchanger API
+description: Chainlink Rates API
 repository: https://github.com/Synthetixio/synthetix-subgraph
 schema:
-  file: synthetix-exchanger.graphql
+  file: synthetix-chainlink.graphql
 dataSources:
   - kind: ethereum/contract
-    name: exchanger
+    name: chainlink
     network: bsctest
     source:
       address: "0xd582733b8ce3b84fcfad9373626c89c7d5606e30"
-      abi: Synthetix
-      startBlock: 15861371
+      abi: Contract
+      startBlock: 11000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
-      file: exchanger\exchanger.wasm
+      file: chainlink\chainlink.wasm
       entities:
-        - AccountLiquidated
-        - CacheUpdated
-        - ExchangeRebate
-        - ExchangeReclaim
-        - ExchangeTracking
-        - OwnerChanged
-        - OwnerNominated
-        - SynthExchange
-        - TokenStateUpdated
-        - Transfer
+        - ResponseReceived
+        - OwnershipRenounced
+        - OwnershipTransferred
+        - ChainlinkRequested
+        - ChainlinkFulfilled
+        - ChainlinkCancelled
+        - AnswerUpdated
+        - NewRound
       abis:
-        - name: Synthetix
-          file: abis\Synthetix.json
-        - name: token
-          file: abis\portfolio.json
         - name: Contract
           file: abis\Contract.json
       eventHandlers:
-        - event: ExchangeTracking(indexed bytes32,bytes32,uint256,uint256)
-          handler: handleExchangeTracking
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleExchangeTransfer
-        - event: AccountLiquidated(indexed address,uint256,uint256,address)
-          handler: handleAccountLiquidated
-        - event: CacheUpdated(bytes32,address)
-          handler: handleCacheUpdated
-        - event: ExchangeRebate(indexed address,bytes32,uint256)
-          handler: handleExchangeRebate
-        - event: ExchangeReclaim(indexed address,bytes32,uint256)
-          handler: handleExchangeReclaim
-        - event: OwnerChanged(address,address)
-          handler: handleOwnerChanged
-        - event: OwnerNominated(address)
-          handler: handleOwnerNominated
-        - event: SynthExchange(indexed address,bytes32,uint256,bytes32,uint256,address)
-          handler: handleSynthExchange
-        - event: TokenStateUpdated(address)
-          handler: handleTokenStateUpdated
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransaction
+        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+          handler: handleAggregatorAnswerUpdated
       blockHandlers:
         - handler: handleBlock

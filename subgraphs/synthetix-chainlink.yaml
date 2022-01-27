@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: chainlink
-    network: bsc
+    network: bsctest
     source:
-      address: '0x264990fbd0a4796a3e3d8e37c4d5f87a3aca5ebf'
+      address: '0xd582733b8ce3b84fcfad9373626c89c7d5606e30'
       abi: Contract
-      startBlock: 14297010
+      startBlock: 11000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
