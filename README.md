@@ -11,6 +11,7 @@ Synthetix has eleven bundled subgraps, all generated from this one repository:
 1. **chainlink**: 查询指定交易对的chainlink 价格，chainlik 合约地址对应
    -- `mainnet`:https://data.chain.link/bsc/mainnet
    -- `testnet`:https://docs.chain.link/docs/binance-smart-chain-addresses
+   -- Deployed to:http://119.8.19.36:8000/subgraphs/name/allenhyfay/sugmrms/graphql
    
 2. **exchanger**: 交易对 交易记录 以及 用户指定币种的持币记录
    bsc testnet :
