@@ -1,4 +1,4 @@
-import { BigInt, ethereum, log, Address, ByteArray, Bytes } from "@graphprotocol/graph-ts";
+import { BigInt, ethereum, log, Address, ByteArray, Bytes, dataSource } from "@graphprotocol/graph-ts";
 import {
   Contract,
   AnswerUpdated
@@ -20,11 +20,12 @@ export function handleAggregatorAnswerUpdated(event:AnswerUpdated):void {
 
 export function handleBlock(block: ethereum.Block): void {
 
-  for (let i =0;i< currencies.length;i++){
+  /*for (let i =0;i< currencies.length;i++){
     let pair = currencies[i];
     updatePrice(chainlinkContracts.get(pair),block);
-  }
-
+  }*/
+  let address = dataSource.address();
+  updatePrice(address.toHexString(),block);
 }
 
 function updatePrice(contractAddress:string ,block: ethereum.Block) :void {
