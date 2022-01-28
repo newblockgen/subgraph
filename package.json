@@ -23,7 +23,7 @@
 
 
     "deploy": "graph deploy --node  https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ allenhyfay/sugmrm",
-    "deploytest": "graph deploy --node  http://42.192.186.62:8020/ --ipfs http://42.192.186.62:5001 allenhyfay/sugmrmsv2",
+    "deploytest": "graph deploy --node  http://119.8.19.36:8020/ --ipfs http://119.8.19.36:5001 allenhyfay/sugmrms",
     "deploybsc": "graph deploy --node http://119.8.19.36:8020/ --ipfs http://119.8.19.36:5001 synthetixio-team/synthetix",
 
     "deploy:chainlink": "npm run deploytest -- subgraphs/synthetix-chainlink.yaml",

@@ -10,7 +10,7 @@ dataSources:
     source:
       address: '0x5e66a1775BbC249b5D51C13d29245522582E671C'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -39,7 +39,7 @@ dataSources:
     source:
       address: '0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -68,7 +68,7 @@ dataSources:
     source:
       address: '0x5741306c21795FdCBb9b265Ea0255F499DFe515C'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -97,7 +97,7 @@ dataSources:
     source:
       address: '0x81faeDDfeBc2F8Ac524327d70Cf913001732224C'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -126,7 +126,7 @@ dataSources:
     source:
       address: '0x963D5e7f285Cc84ed566C486c3c1bC911291be38'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -155,7 +155,7 @@ dataSources:
     source:
       address: '0xEA8731FD0685DB8AeAde9EcAE90C4fdf1d8164ed'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -184,7 +184,7 @@ dataSources:
     source:
       address: '0x143db3CEEfbdfe5631aDD3E50f7614B6ba708BA7'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -213,7 +213,7 @@ dataSources:
     source:
       address: '0x1B329402Cb1825C6F30A0d92aB9E2862BE47333f'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -242,7 +242,7 @@ dataSources:
     source:
       address: '0x957Eb0316f02ba4a9De3D308742eefd44a3c1719'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -271,7 +271,7 @@ dataSources:
     source:
       address: '0x4046332373C24Aed1dC8bAd489A04E187833B28d'
       abi: Contract
-      startBlock: 11000000
+      startBlock: 16000000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
