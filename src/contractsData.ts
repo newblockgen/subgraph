@@ -9,7 +9,7 @@ contracts.set(
 );
 
 
-export const currencies =["zADA","zBNB","zBTC","zCAKE","zDOGE","zDOT","zETH","zLINK","zMATIC","zXRP"];
+export const currencies =["zADA","zBNB","zBTC","zCAKE","zDOGE","zDOT","zETH","zLINK","zMATIC","zXRP","zUSD"];
 
 export let chainlinkContracts = new Map<string,string>();
 //chainlink 交易对 合约地址 正式链
@@ -30,7 +30,7 @@ chainlinkContracts.set("zETH","0x143db3CEEfbdfe5631aDD3E50f7614B6ba708BA7"); //B
 chainlinkContracts.set("zLINK","0x1B329402Cb1825C6F30A0d92aB9E2862BE47333f"); //BNB
 chainlinkContracts.set("zMATIC","0x957Eb0316f02ba4a9De3D308742eefd44a3c1719"); //zETH
 chainlinkContracts.set("zXRP","0x4046332373C24Aed1dC8bAd489A04E187833B28d"); //zETH
-
+chainlinkContracts.set("zUSD","0x42c104EC42713466C04ecC83DB64587EbC03a345"); //zETH
 
 export let synthetixCurrencies = new Map<string,string>();
 /*synthetixCurrencies.set("zBNB","0x68861320b1DE9E21276E572bD0998ca04138291a");
@@ -50,4 +50,4 @@ synthetixCurrencies.set("zMATIC","0x90CF193bD9c236d9b0D425C35b407a24E21C058E");
 synthetixCurrencies.set("zXRP","0xef1bc2A008aA9e45808a049c53560c7fBC447d57");
 synthetixCurrencies.set("zCAKE","0xa40644645Fe97963C7eDE6B8FB2049b5177D590f");
 synthetixCurrencies.set("zDOGE","0xeE025E221c0f72A3356fF8580E6A3d53F63BB1AD");
-
+synthetixCurrencies.set("zUSD","0x42c104EC42713466C04ecC83DB64587EbC03a345"); //zETH

@@ -112,20 +112,28 @@ function readCoinIncrease(coinPrice: FiveMinutePrice, timestamp: BigInt, synPric
   let supply = coinTotalSupply(coinPrice.synth);
   log.info("价格转换：{} , {},{}", [supply.toString(), synPrice.toString(), ""]);
   coinIncrease.marketVal = supply.times(synPrice).truncate(2);
-
+  let rate = (coinIncrease.price.minus(coinIncrease.bPrice)).divDecimal(coinIncrease.bPrice.toBigDecimal()).truncate(4);
+  log.info("coinIncrease price : {},bfprice :{} ,rate :{}",
+    [coinIncrease.price.toString(), coinIncrease.bPrice.toString(), rate.toString()]);
+  coinIncrease.increase = rate;
   coinIncrease.price = coinPrice.close;
   coinIncrease.save();
   //同步二十四小时最高低价 todo *24
-  let beforDayTime = timestamp.minus(BigInt.fromI32(60 * 60));
+  let beforDayTime = timestamp.minus(BigInt.fromI32(60 * 60 *24));
   let dayID = beforDayTime.toI32() / 86400;
   let newCandle = DailyCandle.load(dayID.toString() + "-" + coinPrice.synth);
   if (newCandle) {
     coinIncrease.high = newCandle.high;
     coinIncrease.low = newCandle.low;
+    /* coinIncrease.bPrice = newCandle.close;
+     let rate = (coinIncrease.price.minus(coinIncrease.bPrice)).divDecimal(coinIncrease.bPrice.toBigDecimal()).truncate(4);
+     log.info("coinIncrease price : {},bfprice :{} ,rate :{}",
+       [coinIncrease.price.toString(), coinIncrease.bPrice.toString(), rate.toString()]);
+     coinIncrease.increase = rate;*/
     coinIncrease.save();
   }
   //同步二十四小时前的价格
-  let beforFiveTime = timestamp.minus(BigInt.fromI32(60 * 60));
+  let beforFiveTime = timestamp.minus(BigInt.fromI32(60 * 60 * 24));
   let fiveId = beforFiveTime.toI32() / 300;
   let newFiveCandle = FiveMinutePrice.load(fiveId.toString() + "-" + coinPrice.synth);
   if (newFiveCandle) {

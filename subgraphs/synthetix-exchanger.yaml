@@ -8,9 +8,9 @@ dataSources:
     name: exchanger
     network: bsctest
     source:
-      address: '0xd582733b8ce3b84fcfad9373626c89c7d5606e30'
+      address: '0xE7C79a9e5Dd67f237323523f573a3359542fa7C4'
       abi: Synthetix
-      startBlock: 15301917
+      startBlock: 16108923
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -37,8 +37,6 @@ dataSources:
       eventHandlers:
         - event: ExchangeTracking(indexed bytes32,bytes32,uint256,uint256)
           handler: handleExchangeTracking
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleExchangeTransfer
         - event: AccountLiquidated(indexed address,uint256,uint256,address)
           handler: handleAccountLiquidated
         - event: CacheUpdated(bytes32,address)
@@ -59,3 +57,23 @@ dataSources:
           handler: handleTransaction
       blockHandlers:
         - handler: handleBlock
+  - kind: ethereum/contract
+    name: exchangerSett
+    network: bsctest
+    source:
+      address: '0xbF152d26fBaEfc26264FD0377648928c809f8a69'
+      abi: exchanger
+      startBlock: 16117925
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ../src/exchangersettled.ts
+      entities:
+        - ExchangeEntrySettled
+      abis:
+        - name: exchanger
+          file: ../abis/exchanger.json
+      eventHandlers:
+        - event: 'ExchangeEntrySettled(indexed address,bytes32,uint256,bytes32,uint256,uint256,uint256,uint256,uint256)'
+          handler: 'handleExchangeEntrySettled'

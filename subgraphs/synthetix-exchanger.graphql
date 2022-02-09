@@ -1,15 +1,34 @@
 # RatesUpdated tracks this event from the ExchangeRates.sol contract
 type ExchangeEntrySettled @entity {
-    id: ID!
-    from: Bytes!
-    src: Bytes!
-    amount: BigInt!
-    dest: Bytes!
-    reclaim: BigInt!
-    rebate: BigInt!
-    srcRoundIdAtPeriodEnd: BigInt!
-    destRoundIdAtPeriodEnd: BigInt!
-    exchangeTimestamp: BigInt!
+     " transaction hash and log index "
+      id: ID!
+
+      " synth exchanged from "
+      from: Bytes!
+
+      " synth exchanged to "
+      src: Bytes!
+
+      " number of units of synth from exchanged "
+      amount: BigDecimal!
+
+      " address which receives the settlement "
+      dest: Bytes!
+
+      " amount reclaimed of dest due to underpayment "
+      reclaim: BigDecimal!
+
+      " amount returned of dest due to overpayment "
+      rebate: BigDecimal!
+
+      " aggregator price round for src synth "
+      srcRoundIdAtPeriodEnd: BigInt!
+
+      " aggregator price round for dest synth "
+      destRoundIdAtPeriodEnd: BigInt!
+
+      " time when the original exchange occured "
+      exchangeTimestamp: BigInt!
 }
 
 

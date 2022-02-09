@@ -36,15 +36,20 @@ import { synthetixCurrencies, currencies, chainlinkContracts } from "./contracts
 export function handleBlock(block: ethereum.Block): void {
   let address = dataSource.address();
   let time = block.timestamp;
+
   if ((time.mod(BigInt.fromI32(3600))) > BigInt.fromI32(5)) {
     return;
   }
+  handleZssetTradingBlock(block);
   let accounts = RegisterMember.load(address.toHex() + "-account");
   if (accounts) {
     let currencyPrice = new Map<string, BigDecimal[]>();
     for (let i = 0; i < currencies.length; i++) {
       let pair = currencies[i];
-      let price = getCurrecyPrice(pair);
+      let price = [BigDecimal.fromString("1000000000000000000"),BigDecimal.fromString("1")];
+      if (pair !== 'zUSD'){
+        price = getCurrecyPrice(pair);
+      }
       currencyPrice.set(pair, price);
     }
     let accountArray = accounts.accountList;
@@ -58,7 +63,7 @@ export function handleBlock(block: ethereum.Block): void {
       }
     }
   }
-  handleZssetTradingBlock(block);
+
 }
 
 //统计用户余额
@@ -135,7 +140,8 @@ function loadBalance(pairAddress: string, account: Bytes): BigInt[] {
   let balancetr = tokenContract.try_balanceOf(Address.fromString(account.toHex()));
   let decimail = tokenContract.try_decimals();
   if (balancetr.reverted) {
-    log.warning("Get Latest price reverted at block: {}", [account.toHex()]);
+    log.info("Get Latest price reverted at block: {} pair {}", [account.toHex(),pairAddress]);
+    return [BigInt.zero(),BigInt.zero()];
   }
   if (decimail.reverted) {
     log.warning("Get Latest price reverted at block: {}", [account.toHex()]);

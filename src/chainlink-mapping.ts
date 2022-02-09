@@ -29,6 +29,7 @@ export function handleBlock(block: ethereum.Block): void {
 }
 
 function updatePrice(contractAddress:string ,block: ethereum.Block) :void {
+
   let oracle = Contract.bind(Address.fromString(contractAddress))
   let PAIR = oracle.description();
 

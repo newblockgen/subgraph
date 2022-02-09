@@ -10,3 +10,10 @@ export function strToBytes(str: string, length: i32 = 32): Bytes {
   return Bytes.fromByteArray(Bytes.fromUTF8(str));
 }
 
+export function toDecimal(value: BigInt, decimals: u32 = 18): BigDecimal {
+  let precision = BigInt.fromI32(10)
+    .pow(<u8>decimals)
+    .toBigDecimal();
+
+  return value.divDecimal(precision);
+}
