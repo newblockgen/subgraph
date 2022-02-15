@@ -120,29 +120,15 @@ type YearPortFolio @entity{
     startAmount:BigDecimal!
 }
 
-
-
 type CoinIncrease @entity {
     id:ID!
     "币种"
     synth:String!
-    "最新价格"
-    price:BigInt!
-    "24 H 前价格"
-    bPrice:BigInt!
-    "24H 价格涨幅"
-    increase:BigDecimal!
     timestamp:BigInt!
     "24H 交易量"
     volume:BigInt!
     "24H 消耗手续费"
     fee:BigDecimal!
-    "24H 最高价"
-    high:BigInt!
-    "24H 最低价"
-    low:BigInt!
-    "最新市值"
-    marketVal:BigDecimal!
 }
 
 # 币种交易量
@@ -236,23 +222,3 @@ type ZssetTradingVolWeekly @entity{
     timstamp:BigInt!
 }
 
-type DailyCandle @entity {
-    " DailyEpoch-Asset. E.g. 18361-sETH "
-    id: ID!
-    synth: String!
-    open: BigInt!
-    high: BigInt!
-    low: BigInt!
-    close: BigInt!
-    timestamp: BigInt!
-}
-
-type FiveMinutePrice @entity {
-    id: ID!
-    synth: String!
-    open: BigInt!
-    high: BigInt!
-    low: BigInt!
-    close: BigInt!
-    timestamp: BigInt!
-}

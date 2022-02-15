@@ -1,5 +1,16 @@
-import { DailyCandle,FiveMinutePrice,FifteenMinutePrice,OneHourPrice,FourHoursPrice,WeekPrice } from '../generated/schema';
+import {
+  DailyCandle,
+  FiveMinutePrice,
+  FifteenMinutePrice,
+  OneHourPrice,
+  FourHoursPrice,
+  WeekPrice,
+  CoinIncrease
+} from "../generated/schema";
 import { BigInt } from '@graphprotocol/graph-ts';
+import { Address, BigDecimal, log } from "@graphprotocol/graph-ts/index";
+import { synthetixCurrencies } from "./contractsData";
+import { token } from "../generated/chainlink/token";
 
 export function updateDailyCandle(timestamp: BigInt, synth: string, rate: BigInt): void {
   let dayID = timestamp.toI32() / 86400;
@@ -23,6 +34,55 @@ export function updateDailyCandle(timestamp: BigInt, synth: string, rate: BigInt
   }
   newCandle.close = rate;
   newCandle.save();
+  updateCoinIncreases(newCandle,timestamp);
+}
+
+export function updateCoinIncreases(newCandle:DailyCandle,timestamp: BigInt):void{
+  let synth = newCandle.synth.split("/")[0].trim().toString();
+  if (!synth.startsWith("z")) {
+    synth = "z" + synth;
+  }
+  let id = synth.toString();
+  let coinIncrease = CoinIncrease.load(id);
+  if (!coinIncrease) {
+    coinIncrease = new CoinIncrease(id);
+    coinIncrease.synth = synth;
+    coinIncrease.bPrice = newCandle.open;
+    coinIncrease.high = newCandle.high;
+    coinIncrease.low = newCandle.low;
+    coinIncrease.price = newCandle.close
+  }else{
+    coinIncrease.bPrice = newCandle.open;
+    coinIncrease.high = newCandle.high;
+    coinIncrease.low = newCandle.low;
+    coinIncrease.price = newCandle.close
+  }
+  coinIncrease.timestamp = timestamp;
+  let supply = coinTotalSupply(synth);
+  log.info("价格转换：{} , {},{}", [supply.toString(), coinIncrease.price.toString(), ""]);
+  coinIncrease.marketVal = supply.times(coinIncrease.price.toBigDecimal()).truncate(2);
+  let rate = (coinIncrease.price.minus(coinIncrease.bPrice)).divDecimal(coinIncrease.bPrice.toBigDecimal()).truncate(4);
+  coinIncrease.increase = rate;
+  coinIncrease.save();
+}
+
+
+function coinTotalSupply(coin: string): BigDecimal {
+  const coinAddress = synthetixCurrencies.get(coin);
+  let coinContract = token.bind(Address.fromString(coinAddress));
+  let totalSupply = coinContract.try_totalSupply();
+  let decimail = coinContract.try_decimals();
+  if (totalSupply.reverted) {
+    log.info("Get Latest price reverted at pair {}", [coin]);
+    return BigDecimal.zero();
+  }
+  if (decimail.reverted) {
+    log.warning("Get Latest price reverted at block: {}", []);
+  }
+  let dex = (10 ** BigInt.fromI64(decimail.value).toI64()).toString();
+
+  let number = totalSupply.value.divDecimal(BigDecimal.fromString(dex));
+  return number;
 }
 
 

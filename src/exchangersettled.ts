@@ -1,7 +1,7 @@
 import { BigInt, log, Bytes, ethereum, dataSource, Address, BigDecimal } from "@graphprotocol/graph-ts";
 import {  ExchangeEntrySettled as ExchangeEntrySettledEvent } from "../generated/exchangerSett/exchanger";
 
-import {ExchangeEntrySettled} from "../generated/schema";
+import { ExchangeEntrySettled } from "../generated/schema";
 import {toDecimal} from "./common"
 
 export function handleExchangeEntrySettled(event: ExchangeEntrySettledEvent): void {

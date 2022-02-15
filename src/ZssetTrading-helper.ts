@@ -10,7 +10,7 @@ import {
 import { BigInt } from "@graphprotocol/graph-ts";
 
 export function CurrencyOneDayVol(currency: string, number: BigInt, fee: BigInt, timestamp: BigInt): void {
-  let id = (timestamp.toI32() / 86400).toString() + currency;
+  let id = ((timestamp.toI32()+86400) / 86400).toString() + currency;
   let zssetTradingVolOneDay = ZssetTradingVolOneDay.load(id);
   if (!zssetTradingVolOneDay) {
     zssetTradingVolOneDay = new ZssetTradingVolOneDay(id);
@@ -31,7 +31,7 @@ export function CurrencyOneDayVol(currency: string, number: BigInt, fee: BigInt,
 }
 
 export function CurrencyFiveMinuteVol(currency: string, number: BigInt, fee: BigInt, timestamp: BigInt): void {
-  let id = (timestamp.toI32() / 300).toString() + currency;
+  let id = ((timestamp.toI32()+300) / 300).toString() + currency;
   let zssetTradingVol = ZssetTradingVolFiveMinute.load(id);
   if (!zssetTradingVol) {
     zssetTradingVol = new ZssetTradingVolFiveMinute(id);
@@ -52,7 +52,7 @@ export function CurrencyFiveMinuteVol(currency: string, number: BigInt, fee: Big
 }
 
 export function CurrencyFifteenMinuteVol(currency: string, number: BigInt, fee: BigInt, timestamp: BigInt): void {
-  let id = (timestamp.toI32() / 900).toString() + currency;
+  let id = ((timestamp.toI32()+900) / 900).toString() + currency;
   let zssetTradingVol = ZssetTradingVolFifteenMinute.load(id);
   if (!zssetTradingVol) {
     zssetTradingVol = new ZssetTradingVolFifteenMinute(id);
@@ -73,7 +73,7 @@ export function CurrencyFifteenMinuteVol(currency: string, number: BigInt, fee: 
 }
 
 export function CurrencyOneHourVol(currency: string, number: BigInt, fee: BigInt, timestamp: BigInt): void {
-  let id = (timestamp.toI32() / 3600).toString() + currency;
+  let id = ((timestamp.toI32()+3600) / 3600).toString() + currency;
   let zssetTradingVol = ZssetTradingVolOneHour.load(id);
   if (!zssetTradingVol) {
     zssetTradingVol = new ZssetTradingVolOneHour(id);
@@ -94,7 +94,7 @@ export function CurrencyOneHourVol(currency: string, number: BigInt, fee: BigInt
 }
 
 export function CurrencyFourHourVol(currency: string, number: BigInt, fee: BigInt, timestamp: BigInt): void {
-  let id = (timestamp.toI32() / 14400).toString() + currency;
+  let id = ((timestamp.toI32()+14400) / 14400).toString() + currency;
   let zssetTradingVol = ZssetTradingVolFourHour.load(id);
   if (!zssetTradingVol) {
     zssetTradingVol = new ZssetTradingVolFourHour(id);
@@ -115,7 +115,7 @@ export function CurrencyFourHourVol(currency: string, number: BigInt, fee: BigIn
 }
 
 export function CurrencyWeeklyVol(currency: string, number: BigInt, fee: BigInt, timestamp: BigInt): void {
-  let id = (timestamp.toI32() / 604800).toString() + currency;
+  let id = ((timestamp.toI32()+604800) / 604800).toString() + currency;
   let zssetTradingVol = ZssetTradingVolWeekly.load(id);
   if (!zssetTradingVol) {
     zssetTradingVol = new ZssetTradingVolWeekly(id);

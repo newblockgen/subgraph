@@ -15,7 +15,7 @@ import {
   Synthetix
 } from "../generated/exchanger/Synthetix";
 import { Contract } from "../generated/exchanger/Contract";
-import { zssetValcolum,handleZssetTradingBlock } from "./ZssetTrading";
+import { zssetValcolum, handleZssetTradingBlock} from "./ZssetTrading";
 
 import {
   token
@@ -63,8 +63,8 @@ export function handleBlock(block: ethereum.Block): void {
       }
     }
   }
-
 }
+
 
 //统计用户余额
 function memberTokenBalance(accountId: Bytes, block: ethereum.Block, priceCurrcy: Map<string, BigDecimal[]>): void {
