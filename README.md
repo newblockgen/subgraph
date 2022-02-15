@@ -138,22 +138,31 @@ For any of the eleven subgraphs: `snx`, `exchanges`, `rates`, `depot`, `loans`, 
   ```
   
   
-   2).币种排名
-      每个币种只有一条数据, 对应字段的排序需 调用者自行处理
+ 2).币种排名
+      每个币种只有一条数据, 对应字段的排序需 调用者自行处理 exchanger
    ```
    {  
      coinIncreases{ 
         id        
         synth                 #币种
-        price                 #最新价格
-        bPrice                #24h前价格
-        increase              # 价格涨幅
-        timestamp             # 更新时间
         volume                #24h 交易量
         fee                   #24H 手续费
-        high                  #24H 最高价
-        low                   #24H 最低价
-        marketVal             #市值（USD）[发行量 * 当前价格]
       }
    }
    ```
+   币种的24小时排序移动到chainlink 获取价格的接口中
+   ````
+     {  
+        coinIncreases{ 
+           id        
+           synth                 #币种
+           price                 #最新价格
+           bPrice                #24h前价格
+           increase              # 价格涨幅
+           timestamp             # 更新时间
+           high                  #24H 最高价
+           low                   #24H 最低价
+           marketVal             #市值（USD）[发行量 * 当前价格]
+         }
+      }
+   ````
