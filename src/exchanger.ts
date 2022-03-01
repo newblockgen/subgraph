@@ -41,28 +41,25 @@ export function handleBlock(block: ethereum.Block): void {
     return;
   }
   handleZssetTradingBlock(block);
-  let accounts = RegisterMember.load(address.toHex() + "-account");
-  if (accounts) {
-    let currencyPrice = new Map<string, BigDecimal[]>();
-    for (let i = 0; i < currencies.length; i++) {
-      let pair = currencies[i];
-      let price = [BigDecimal.fromString("1000000000000000000"),BigDecimal.fromString("1")];
-      if (pair !== 'zUSD'){
-        price = getCurrecyPrice(pair);
-      }
-      currencyPrice.set(pair, price);
+}
+
+function loadAccountBalance(accountId:string,block:ethereum.Block):void{
+  let currencyPrice = new Map<string, BigDecimal[]>();
+  for (let i = 0; i < currencies.length; i++) {
+    let pair = currencies[i];
+    let price = [BigDecimal.fromString("1000000000000000000"),BigDecimal.fromString("1")];
+    if (pair !== 'zUSD'){
+      price = getCurrecyPrice(pair);
     }
-    let accountArray = accounts.accountList;
-    log.info("accountArray:{}",[accountArray.length.toString()])
-    for (let i = 0; i < accountArray.length; i++) {
-      let accountId = accountArray[i];
-      let account = Account.load(accountId);
-      log.info("accountArray: account{}",[accountId])
-      if (account) {
-        memberTokenBalance(account.account, block, currencyPrice);
-      }
-    }
+    currencyPrice.set(pair, price);
   }
+
+  let account = Account.load(accountId);
+  log.info("accountArray: account{}",[accountId])
+  if (account) {
+    memberTokenBalance(account.account, block, currencyPrice);
+  }
+
 }
 
 
@@ -231,7 +228,7 @@ function addAccount(account: Bytes, block: ethereum.Block): void {
   }
   accounts.timstamp = block.timestamp;
   accounts.save();
-
+  loadAccountBalance(account.toHexString(),block);
 }
 
 export function handleTokenStateUpdated(event: TokenStateUpdated): void {
