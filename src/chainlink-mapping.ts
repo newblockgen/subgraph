@@ -25,14 +25,21 @@ export function handleBlock(block: ethereum.Block): void {
     updatePrice(chainlinkContracts.get(pair),block);
   }*/
   let address = dataSource.address();
+
   updatePrice(address.toHexString(),block);
+
+
 }
 
 function updatePrice(contractAddress:string ,block: ethereum.Block) :void {
 
   let oracle = Contract.bind(Address.fromString(contractAddress))
-  let PAIR = oracle.description();
-
+  let PAIRdesc = oracle.try_description();
+  if(PAIRdesc.reverted){
+    log.warning("Get Latest price reverted at block: {}", [block.number.toString()])
+    return;
+  }
+  let PAIR = PAIRdesc.value;
   //Create a new Price object, with the block number as ID.
   let price = new Price(block.number.toString()+ PAIR)
   //Create a new instance of Chainlink Contract
@@ -42,6 +49,7 @@ function updatePrice(contractAddress:string ,block: ethereum.Block) :void {
     log.warning("Get Latest price reverted at block: {}", [block.number.toString()])
     return;
   }
+
   //Add data onto Price
   price.timestamp = block.timestamp
   price.blockNumber = block.number

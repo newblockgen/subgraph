@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: exchanger
-    network: bsctest
+    network: chapel
     source:
       address: '0xE7C79a9e5Dd67f237323523f573a3359542fa7C4'
       abi: Synthetix
@@ -59,7 +59,7 @@ dataSources:
         - handler: handleBlock
   - kind: ethereum/contract
     name: exchangerSett
-    network: bsctest
+    network: chapel
     source:
       address: '0xbF152d26fBaEfc26264FD0377648928c809f8a69'
       abi: exchanger
