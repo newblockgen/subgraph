@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: zDOT
-    network: bsctest
+    network: chapel
     source:
       address: '0xEA8731FD0685DB8AeAde9EcAE90C4fdf1d8164ed'
       abi: Contract

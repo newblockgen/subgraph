@@ -156,3 +156,24 @@ For any of the eleven subgraphs: `snx`, `exchanges`, `rates`, `depot`, `loans`, 
       }
    }
    ```
+   
+   
+   
+   
+   
+   
+   ##### thegraph url: 
+   ````
+   https://api.thegraph.com/subgraphs/name/njess00/exchanger
+    https://api.thegraph.com/subgraphs/name/njess00/zada
+    https://api.thegraph.com/subgraphs/name/njess00/zbnb
+    https://api.thegraph.com/subgraphs/name/njess00/zbtc
+    https://api.thegraph.com/subgraphs/name/njess00/zcake
+    https://api.thegraph.com/subgraphs/name/njess00/zdoge
+    https://api.thegraph.com/subgraphs/name/njess00/zdot
+    https://api.thegraph.com/subgraphs/name/njess00/zeth
+    https://api.thegraph.com/subgraphs/name/njess00/zlink
+    https://api.thegraph.com/subgraphs/name/njess00/zmatic
+    https://api.thegraph.com/subgraphs/name/njess00/zxrp
+   
+   ````

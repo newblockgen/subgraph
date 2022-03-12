@@ -19,7 +19,6 @@ chainlinkContracts.set("zBNB","0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee"); //B
 chainlinkContracts.set("iBNB","0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee"); //BNB
 chainlinkContracts.set("zETH","0x9ef1b8c0e4f7dc8bf5719ea496883dc6401d5b2e"); //zETH*/
 //测试链
-// chainlinkContracts.set("HZN","0x1a602D4928faF0A153A520f58B332f9CAFF320f7"); //BTC
 chainlinkContracts.set("zADA","0x5e66a1775BbC249b5D51C13d29245522582E671C"); //BTC
 chainlinkContracts.set("zBNB","0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526"); //BNB
 chainlinkContracts.set("zBTC","0x5741306c21795FdCBb9b265Ea0255F499DFe515C"); //BNB

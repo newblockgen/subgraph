@@ -32,14 +32,24 @@ export function handleBlock(block: ethereum.Block): void {
 }
 
 function updatePrice(contractAddress:string ,block: ethereum.Block) :void {
-
   let oracle = Contract.bind(Address.fromString(contractAddress))
-  let PAIRdesc = oracle.try_description();
+  let PAIR = "";
+  for (let i = 0; i < currencies.length; i++) {
+    let pair_ = currencies[i];
+    let addr_ = chainlinkContracts.get(pair_);
+    if (contractAddress.toLowerCase() == addr_.toLowerCase()){
+      PAIR = pair_;
+      break;
+    }
+  }
+
+/*  let PAIRdesc = oracle.try_description();
   if(PAIRdesc.reverted){
     log.warning("Get Latest price reverted at block: {}", [block.number.toString()])
     return;
   }
-  let PAIR = PAIRdesc.value;
+   let PAIR = PAIRdesc.value;*/
+  log.warning("pair address {} ",[PAIR]);
   //Create a new Price object, with the block number as ID.
   let price = new Price(block.number.toString()+ PAIR)
   //Create a new instance of Chainlink Contract

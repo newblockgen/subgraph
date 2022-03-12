@@ -241,7 +241,7 @@ export function handleTransaction(event: Transfer): void {
 
 // 用户每小时余额持币对比
 function updateOneHourPortFolio(portfolio: Portfolio): void {
-  let time = BigInt.fromI32(60 * 60);
+  let time = BigInt.fromI32(portfolio.timstamp.toI32()/3600);
   let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = OneHourPortFolio.load(id);
   if (!portBo) {
@@ -253,16 +253,6 @@ function updateOneHourPortFolio(portfolio: Portfolio): void {
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account;
-  portBo.timstamp = portfolio.timstamp;
-  let beforAmount = portfolio.amount;
-  let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
-  if (beforPorfolioBo) {
-    portBo.startAmount = beforPorfolioBo.amount;
-  } else {
-    portBo.startAmount = beforAmount;
-  }
   portBo.amount = portfolio.amount;
   portBo.save();
 
@@ -270,7 +260,7 @@ function updateOneHourPortFolio(portfolio: Portfolio): void {
 
 // 用户最近1天余额持币对比
 function updateOneDayPortFolio(portfolio: Portfolio): void {
-  let time = BigInt.fromI32(60 * 60 * 24);
+  let time = BigInt.fromI32(portfolio.timstamp.toI32()/86400);
   let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = OneDayPortFolio.load(id);
   if (!portBo) {
@@ -282,24 +272,13 @@ function updateOneDayPortFolio(portfolio: Portfolio): void {
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account;
-  portBo.timstamp = portfolio.timstamp;
-
-  let beforAmount = portfolio.amount;
-  let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
-  if (beforPorfolioBo) {
-    portBo.startAmount = beforPorfolioBo.amount;
-  } else {
-    portBo.startAmount = beforAmount;
-  }
   portBo.amount = portfolio.amount;
   portBo.save();
 }
 
 // 用户最近1周余额持币对比
 function updateWeekPortFolio(portfolio: Portfolio): void {
-  let time = BigInt.fromI32(60 * 60 * 24 * 7);
+  let time = BigInt.fromI32(portfolio.timstamp.toI32()/604800);
   let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = WeekPortFolio.load(id);
   if (!portBo) {
@@ -311,16 +290,6 @@ function updateWeekPortFolio(portfolio: Portfolio): void {
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account;
-  portBo.timstamp = portfolio.timstamp;
-  let beforAmount = portfolio.amount;
-  let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
-  if (beforPorfolioBo) {
-    portBo.startAmount = beforPorfolioBo.amount;
-  } else {
-    portBo.startAmount = beforAmount;
-  }
   portBo.amount = portfolio.amount;
   portBo.save();
 }
@@ -328,7 +297,7 @@ function updateWeekPortFolio(portfolio: Portfolio): void {
 
 // 用户最近一个月余额持币对比
 function updateMonthPortFolio(portfolio: Portfolio): void {
-  let time = BigInt.fromI32(60 * 60 * 24 * 30);
+  let time = BigInt.fromI32(portfolio.timstamp.toI32()/(60 * 60 * 24 * 30));
   let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = MonthPortFolio.load(id);
   if (!portBo) {
@@ -340,16 +309,6 @@ function updateMonthPortFolio(portfolio: Portfolio): void {
     portBo.save();
     return;
   }
-  portBo.account = portfolio.account;
-  portBo.timstamp = portfolio.timstamp;
-  let beforAmount = portfolio.amount;
-  let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
-  if (beforPorfolioBo) {
-    portBo.startAmount = beforPorfolioBo.amount;
-  } else {
-    portBo.startAmount = beforAmount;
-  }
   portBo.amount = portfolio.amount;
   portBo.save();
 
@@ -357,7 +316,7 @@ function updateMonthPortFolio(portfolio: Portfolio): void {
 
 // 用户最近1年余额持币对比
 function updateYearPortFolio(portfolio: Portfolio): void {
-  let time = BigInt.fromI32(60 * 60 * 24 * 365);
+  let time = BigInt.fromI32(portfolio.timstamp.toI32()/(60 * 60 * 24 * 365));
   let id = portfolio.account.toHexString() + "-" + time.toString();
   let portBo = YearPortFolio.load(id);
   if (!portBo) {
@@ -368,16 +327,6 @@ function updateYearPortFolio(portfolio: Portfolio): void {
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
-  }
-  portBo.account = portfolio.account;
-  portBo.timstamp = portfolio.timstamp;
-  let beforAmount = portfolio.amount;
-  let beforTime = portfolio.timstamp.minus(time);
-  let beforPorfolioBo = Portfolio.load(portfolio.account.toHexString() + "-" + beforTime.toString());
-  if (beforPorfolioBo) {
-    portBo.startAmount = beforPorfolioBo.amount;
-  } else {
-    portBo.startAmount = beforAmount;
   }
   portBo.amount = portfolio.amount;
   portBo.save();

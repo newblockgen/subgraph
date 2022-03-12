@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: zDOGE
-    network: bsctest
+    network: chapel
     source:
       address: '0x963D5e7f285Cc84ed566C486c3c1bC911291be38'
       abi: Contract
