@@ -8,9 +8,9 @@ dataSources:
     name: exchanger
     network: bsc
     source:
-      address: '0xE7C79a9e5Dd67f237323523f573a3359542fa7C4'
+      address: '0xC0eFf7749b125444953ef89682201Fb8c6A917CD'
       abi: Synthetix
-      startBlock: 16722479
+      startBlock: 16077390
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -61,9 +61,9 @@ dataSources:
     name: exchangerSett
     network: bsc
     source:
-      address: '0xbF152d26fBaEfc26264FD0377648928c809f8a69'
+      address: '0x0610BE8e52a42840E128bb4Bce01E2342981A839'
       abi: exchanger
-      startBlock: 16722479
+      startBlock: 16077390
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

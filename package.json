@@ -10,7 +10,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "yaml:chainlink": "node ./create-yaml-file create-yaml --subgraph chainlink --env prod --universal-test-block null | mustache - mustache/yaml.mustache > subgraphs/synthetix-chainlink.yaml",
+    "yaml:chainlink": "node ./create-yaml-file create-yaml --subgraph chainlink --env prod --universal-test-block null | mustache - mustache/yaml.mustache > subgraphs/synthetix-.yaml",
     "codegen": "graph codegen",
     "codegen:chainlink": "npm run codegen -- subgraphs/synthetix-chainlink.yaml",
     "codegen:chainlink2": "npm run codegen -- subgraphs/synthetix-chainlink2.yaml",
@@ -39,8 +39,8 @@
     "build-allChainlink": "npm run build:chainlink && npm run build:chainlink2 && npm run build:chainlink3 && npm run build:chainlink4 && npm run build:chainlink5 && npm run build:chainlink6 && npm run build:chainlink7 && npm run build:chainlink8 && npm run build:chainlink9 && npm run build:chainlink10",
     "build:exchanger": "graph build subgraphs/synthetix-exchanger.yaml",
 
-    "graphauth":"graph auth --product hosted-service d72e6b268679449c92510a4e2e88ea19 ",
-    "deploy-idc:exchange":"npm run graphauth && graph deploy --product hosted-service  horizonprotocol-git/testnet-horizon-exchanger  -- subgraphs/synthetix-exchanger.yaml",
+    "graphauth":"graph auth --product hosted-service 73b78a9ac43743249d96aef19b6aae13 ",
+    "deploy-idc:exchange":"npm run graphauth && graph deploy --product hosted-service  horizon-protocol/mainnet-horizon-exchanger  -- subgraphs/synthetix-exchanger.yaml",
     "deploy-idc:chainlink":"npm run codegen:chainlink && npm run build:chainlink &&  npm run graphauth && graph deploy --product hosted-service horizonprotocol-git/testnet-horizon-zada -- subgraphs/synthetix-chainlink.yaml",
     "deploy-idc:chainlink2":"npm run codegen:chainlink2 && npm run build:chainlink2 &&  npm run graphauth && graph deploy --product hosted-service horizonprotocol-git/testnet-horizon-zbnb -- subgraphs/synthetix-chainlink2.yaml",
     "deploy-idc:chainlink3":"npm run codegen:chainlink3 && npm run build:chainlink3 &&  npm run graphauth && graph deploy --product hosted-service horizonprotocol-git/testnet-horizon-zbtc -- subgraphs/synthetix-chainlink3.yaml",
