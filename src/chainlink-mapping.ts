@@ -2,7 +2,7 @@ import { BigInt, ethereum, log, Address, ByteArray, Bytes, dataSource } from "@g
 import {
   Contract,
   AnswerUpdated
-} from "../generated/chainlink/Contract"
+} from "../generated/zBTC/Contract"
 import {  Price } from "../generated/schema"
 import {
   updateDailyCandle,

@@ -10,7 +10,7 @@ import {
 import { BigInt } from '@graphprotocol/graph-ts';
 import { Address, BigDecimal, log } from "@graphprotocol/graph-ts/index";
 import { synthetixCurrencies } from "./contractsData";
-import { token } from "../generated/chainlink/token";
+import { token } from "../generated/zBTC/token";
 
 export function updateDailyCandle(timestamp: BigInt, synth: string, rate: BigInt): void {
   let dayID = timestamp.toI32() / 86400;
@@ -34,7 +34,7 @@ export function updateDailyCandle(timestamp: BigInt, synth: string, rate: BigInt
   }
   newCandle.close = rate;
   newCandle.save();
-  updateCoinIncreases(newCandle,timestamp);
+  // updateCoinIncreases(newCandle,timestamp);
 }
 
 export function updateCoinIncreases(newCandle:DailyCandle,timestamp: BigInt):void{

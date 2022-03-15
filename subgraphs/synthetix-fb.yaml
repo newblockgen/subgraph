@@ -1,0 +1,38 @@
+specVersion: 0.0.2
+description: Chainlink Rates API
+repository: https://github.com/Synthetixio/synthetix-subgraph
+schema:
+  file: ./synthetix-chainlink.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: zFB
+    network: bsc
+    source:
+      address: '0xfc76E9445952A3C31369dFd26edfdfb9713DF5Bb'
+      abi: Contract
+      startBlock: 13500000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ../src/chainlink-mapping.ts
+      entities:
+        - ResponseReceived
+        - OwnershipRenounced
+        - OwnershipTransferred
+        - ChainlinkRequested
+        - ChainlinkFulfilled
+        - ChainlinkCancelled
+        - AnswerUpdated
+        - NewRound
+      abis:
+        - name: Contract
+          file: ../abis/Contract.json
+        - name: token
+          file: ../abis/portfolio.json
+      eventHandlers:
+        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+          handler: handleAggregatorAnswerUpdated
+      blockHandlers:
+        -  handler: handleBlock
+
