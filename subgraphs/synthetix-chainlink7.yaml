@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: zETH
-    network: chapel
+    network: bsc
     source:
       address: '0x143db3CEEfbdfe5631aDD3E50f7614B6ba708BA7'
       abi: Contract

@@ -20,6 +20,10 @@ module.exports = {
         {
           name: 'Contract',
           path: '../abis/Contract.json',
+        },
+        {
+          name: 'token',
+          path: '../abis/portfolio.json',
         }
       ],
       events: [
