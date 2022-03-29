@@ -88,7 +88,7 @@
     "remove-local": "graph remove --node http://42.192.186.62:8020/ synthetixio-team/synthetix",
     "deploy-local": "graph deploy --node http://192.168.6.249:8020/ --ipfs http://192.168.6.249:5001 synthetixio-team/synthetix",
     "graphauth":"graph auth --product hosted-service d72e6b268679449c92510a4e2e88ea19 ",
-    "deploy-idc:exchange":"npm run graphauth && graph deploy --product hosted-service  horizonprotocol-git/testnet-horizon-exchanger  -- subgraphs/synthetix-exchanger.yaml",
+    "deploy-idc:exchange":"npm run graphauth && graph deploy --product hosted-service  horizonprotocol-git/testnet-horizon-exchanger2  -- subgraphs/synthetix-exchanger.yaml",
     "deploy-idc:chainlink":"npm run codegen:chainlink && npm run build:chainlink &&  npm run graphauth && graph deploy --product hosted-service horizonprotocol-git/testnet-horizon-zada -- subgraphs/synthetix-chainlink.yaml",
     "deploy-idc:chainlink2":"npm run codegen:chainlink2 && npm run build:chainlink2 &&  npm run graphauth && graph deploy --product hosted-service horizonprotocol-git/testnet-horizon-zbnb -- subgraphs/synthetix-chainlink2.yaml",
     "deploy-idc:chainlink3":"npm run codegen:chainlink3 && npm run build:chainlink3 &&  npm run graphauth && graph deploy --product hosted-service horizonprotocol-git/testnet-horizon-zbtc -- subgraphs/synthetix-chainlink3.yaml",

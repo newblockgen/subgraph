@@ -36,6 +36,9 @@ import { synthetixCurrencies, currencies, chainlinkContracts } from "./contracts
 export function handleBlock(block: ethereum.Block): void {
   let address = dataSource.address();
   let time = block.timestamp;
+  if(block.number == BigInt.fromI32(17871276)){
+    return;
+  }
 
   if ((time.mod(BigInt.fromI32(3600))) > BigInt.fromI32(5)) {
     return;

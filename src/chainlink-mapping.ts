@@ -2,7 +2,7 @@ import { BigInt, ethereum, log, Address, ByteArray, Bytes, dataSource } from "@g
 import {
   Contract,
   AnswerUpdated
-} from "../generated/zLINK/Contract"
+} from "../generated/zCAKE/Contract"
 import {  Price } from "../generated/schema"
 import {
   updateDailyCandle,
@@ -25,6 +25,9 @@ export function handleBlock(block: ethereum.Block): void {
     updatePrice(chainlinkContracts.get(pair),block);
   }*/
   let address = dataSource.address();
+  if (block.number.equals(BigInt.fromI32( 17693375))){
+    return;
+  }
 
   updatePrice(address.toHexString(),block);
 
