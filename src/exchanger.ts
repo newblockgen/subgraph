@@ -39,6 +39,9 @@ export function handleBlock(block: ethereum.Block): void {
   if(block.number == BigInt.fromI32(17871276)){
     return;
   }
+  if(block.number == BigInt.fromI32(18183402)){
+    return;
+  }
 
   if ((time.mod(BigInt.fromI32(3600))) > BigInt.fromI32(5)) {
     return;
@@ -48,6 +51,7 @@ export function handleBlock(block: ethereum.Block): void {
 
 function loadAccountBalance(accountId:string,block:ethereum.Block):void{
   let currencyPrice = new Map<string, BigDecimal[]>();
+  // log.info("======{}   ==============xxx===============   {}   ==== ",[block.number.toString(), "1111111111111111"]);
   for (let i = 0; i < currencies.length; i++) {
     let pair = currencies[i];
     let price = [BigDecimal.fromString("1000000000000000000"),BigDecimal.fromString("1")];
@@ -57,6 +61,7 @@ function loadAccountBalance(accountId:string,block:ethereum.Block):void{
     currencyPrice.set(pair, price);
   }
 
+  // log.info("======{}   ==============xxx===============   {}   ==== ",[block.number.toString(), "22222222222222222"]);
   let account = Account.load(accountId);
   log.info("accountArray: account{}",[accountId])
   if (account) {
@@ -78,6 +83,7 @@ function memberTokenBalance(accountId: Bytes, block: ethereum.Block, priceCurrcy
     let pair = currencies[i];
     let pairAddress = synthetixCurrencies.get(pair);
     let balace = loadBalance(pairAddress, accountId);
+    log.info("{} ==== memberTokenBalance is {}",[pair,balace[0].toString()]);
     let ZAssetBalance = memberHistory(balace[0], accountId, block, pair, priceCurrcy);
     count = count.plus(ZAssetBalance.usdConvertBalance);
     zassetArray.push(ZAssetBalance.id);
@@ -108,6 +114,7 @@ function getCurrecyPrice(pair: string): BigDecimal[] {
   }
   if (decimail.reverted) {
     log.info("Get Latest price reverted at block: {}", [pair]);
+    return [BigDecimal.zero(),BigDecimal.zero()];
   }
   let dex = (10 ** BigInt.fromI64(decimail.value).toI64()).toString();
 
@@ -139,15 +146,17 @@ function loadBalance(pairAddress: string, account: Bytes): BigInt[] {
   let tokenContract = token.bind(Address.fromString(pairAddress));
   let balancetr = tokenContract.try_balanceOf(Address.fromString(account.toHex()));
   let decimail = tokenContract.try_decimals();
-  if (balancetr.reverted) {
-    log.info("Get Latest price reverted at block: {} pair {}", [account.toHex(),pairAddress]);
-    return [BigInt.zero(),BigInt.zero()];
-  }
-  if (decimail.reverted) {
-    log.warning("Get Latest price reverted at block: {}", [account.toHex()]);
-  }
-  let bigDecimail = BigInt.fromI32(decimail.value);
-  return [balancetr.value, bigDecimail];
+  return [BigInt.zero(),BigInt.zero()];
+  // if (balancetr.reverted) {
+  //   log.info("Get Latest price reverted at block: {} pair {}", [account.toHex(),pairAddress]);
+  //   return [BigInt.zero(),BigInt.zero()];
+  // }
+  // if (decimail.reverted) {
+  //   log.warning("Get Latest price reverted at block: {}", [account.toHex()]);
+  //   return [BigInt.zero(),BigInt.zero()];
+  // }
+  // let bigDecimail = BigInt.fromI32(decimail.value);
+  // return [balancetr.value, bigDecimail];
 }
 
 //交易记录
@@ -193,6 +202,10 @@ export function handleProxyUpdated(event: ProxyUpdated): void {
 
 //交易记录
 export function handleSynthExchange(event: SynthExchange): void {
+  if(event.block.number == BigInt.fromI32(18183402)){
+    return;
+  }
+  // log.info("======{}   =============================   {}   ==== ",[event.block.number.toString(),"111111111111111111111"]);
   let trans = Transaction.load(event.transaction.hash.toHexString());
   if (!trans) {
     trans = new Transaction(event.transaction.hash.toHexString());
@@ -207,8 +220,11 @@ export function handleSynthExchange(event: SynthExchange): void {
   trans.block = event.block.number;
   trans.timstamp = event.block.timestamp;
   trans.save();
+  // log.info("======{}   =============================   {}   ==== ",[event.block.number.toString(), "222222222222222222"]);
   addAccount(trans.account, event.block);
+  // log.info("======{}   =============================   {}   ==== ",[event.block.number.toString(), "3333333333333"]);
   zssetValcolum(trans);
+  // log.info("======{}   =============================   {}   ==== ",[event.block.number.toString(), "444444444444444444444444444444444444"]);
 }
 
 // 凡是交易过的用户都添加监听
@@ -217,6 +233,7 @@ function addAccount(account: Bytes, block: ethereum.Block): void {
   if (accounts === null) {
     accounts = new RegisterMember(dataSource.address().toHex() + "-account");
   }
+
   let accountArray = accounts.accountList;
   if (accountArray.indexOf(account.toHexString()) == -1) {
     let accountBody = Account.load(account.toHexString());
@@ -231,16 +248,17 @@ function addAccount(account: Bytes, block: ethereum.Block): void {
   }
   accounts.timstamp = block.timestamp;
   accounts.save();
+
   loadAccountBalance(account.toHexString(),block);
 }
 
-export function handleTokenStateUpdated(event: TokenStateUpdated): void {
-  log.info("log in handleTokenStateUpdated", []);
-}
-
-export function handleTransaction(event: Transfer): void {
-  log.info("log in handleTransaction", []);
-}
+// export function handleTokenStateUpdated(event: TokenStateUpdated): void {
+//   log.info("log in handleTokenStateUpdated", []);
+// }
+//
+// export function handleTransaction(event: Transfer): void {
+//   log.info("log in handleTransaction", []);
+// }
 
 // 用户每小时余额持币对比
 function updateOneHourPortFolio(portfolio: Portfolio): void {

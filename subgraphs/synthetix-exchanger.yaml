@@ -51,10 +51,10 @@ dataSources:
           handler: handleOwnerNominated
         - event: SynthExchange(indexed address,bytes32,uint256,bytes32,uint256,address)
           handler: handleSynthExchange
-        - event: TokenStateUpdated(address)
-          handler: handleTokenStateUpdated
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransaction
+#        - event: TokenStateUpdated(address)
+#          handler: handleTokenStateUpdated
+#        - event: Transfer(indexed address,indexed address,uint256)
+#          handler: handleTransaction
       blockHandlers:
         - handler: handleBlock
   - kind: ethereum/contract
