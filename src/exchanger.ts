@@ -248,7 +248,8 @@ function updateOneHourPortFolio(portfolio: Portfolio): void {
     portBo = new OneHourPortFolio(id);
     portBo.account = portfolio.account;
     portBo.timstamp = portfolio.timstamp;
-    portBo.amount = portfolio.amount;
+    // portBo.amount = portfolio.amount;
+    portBo.amount = portBo.amount.times(portfolio.amount);
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
@@ -267,7 +268,8 @@ function updateOneDayPortFolio(portfolio: Portfolio): void {
     portBo = new OneDayPortFolio(id);
     portBo.account = portfolio.account;
     portBo.timstamp = portfolio.timstamp;
-    portBo.amount = portfolio.amount;
+    // portBo.amount = portfolio.amount;
+      portBo.amount = portBo.amount.times(portfolio.amount);
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
@@ -285,7 +287,8 @@ function updateWeekPortFolio(portfolio: Portfolio): void {
     portBo = new WeekPortFolio(id);
     portBo.account = portfolio.account;
     portBo.timstamp = portfolio.timstamp;
-    portBo.amount = portfolio.amount;
+    // portBo.amount = portfolio.amount;
+      portBo.amount = portBo.amount.times(portfolio.amount);
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
@@ -304,7 +307,8 @@ function updateMonthPortFolio(portfolio: Portfolio): void {
     portBo = new MonthPortFolio(id);
     portBo.account = portfolio.account;
     portBo.timstamp = portfolio.timstamp;
-    portBo.amount = portfolio.amount;
+    // portBo.amount = portfolio.amount;
+      portBo.amount = portBo.amount.times(portfolio.amount);
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
@@ -323,7 +327,8 @@ function updateYearPortFolio(portfolio: Portfolio): void {
     portBo = new YearPortFolio(id);
     portBo.account = portfolio.account;
     portBo.timstamp = portfolio.timstamp;
-    portBo.amount = portfolio.amount;
+    // portBo.amount = portfolio.amount;
+      portBo.amount = portBo.amount.times(portfolio.amount);
     portBo.startAmount = portfolio.amount;
     portBo.save();
     return;
