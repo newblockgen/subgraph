@@ -81,14 +81,26 @@ chainlinkContracts.set("zPFE","0xe96fFdE2ba50E0e869520475ee1bC73cA2dEE326");
 
 export let synthetixCurrencies = new Map<string,string>();
 
-synthetixCurrencies.set("zADA","0x960CaeB681EE37fB259B6caBB1b6BD075421C4ca");
-synthetixCurrencies.set("zBNB","0x62641D0Cb18fC2751A0a478BfaE635BFF5ACA508");
-synthetixCurrencies.set("zBTC","0x1b9357580Bd8b939A1c1685953F18f9C22eA15fC");
-synthetixCurrencies.set("zETH","0x67E49A3F4F19A3A6a7E46f4264Aa176068eDbECF");
-synthetixCurrencies.set("zDOT","0x7ea660B5FbEc26c3A74f598384bC6397Fe1A3005");
-synthetixCurrencies.set("zLINK","0xEA4add20BDA400d20B301028C5da82DF10B32983");
-synthetixCurrencies.set("zMATIC","0x90CF193bD9c236d9b0D425C35b407a24E21C058E");
-synthetixCurrencies.set("zXRP","0xef1bc2A008aA9e45808a049c53560c7fBC447d57");
-synthetixCurrencies.set("zCAKE","0xa40644645Fe97963C7eDE6B8FB2049b5177D590f");
-synthetixCurrencies.set("zDOGE","0xeE025E221c0f72A3356fF8580E6A3d53F63BB1AD");
-synthetixCurrencies.set("zUSD","0x42c104EC42713466C04ecC83DB64587EbC03a345"); //zETH
+
+synthetixCurrencies.set("zBTC","0x82236cdE8FE6c3E5FCd0d89cb78Da12E86224f77");
+synthetixCurrencies.set("zETH","0x22879E82221938EFE9e1c0AD10576C80099cCe3e");
+synthetixCurrencies.set("zBNB","0x6DEdCEeE04795061478031b1DfB3c1ddCA80B204");
+synthetixCurrencies.set("zADA","0x2FeE19f7cf91C353a0b1b085C2E393A95eBFf3Ee");
+synthetixCurrencies.set("zDOT","0xd476639385caB696ac4d6aD7F1AE1fe4A32957f5");
+synthetixCurrencies.set("zSOL","0xAb3f54d31467695beDd561F22a0E05ac3b18D615");
+synthetixCurrencies.set("zXRP","0x0BD9C670d7Bb289D0b307e79e239382a22312591");
+synthetixCurrencies.set("zCAKE","0x6E9266e1D5Be59393c606750f55f96E4445F87FB");
+synthetixCurrencies.set("zLINK","0xf6c31F0265747AB449367eA651d094efaecd9875");
+synthetixCurrencies.set("zXAU","0x6d4e17606C4C0FEc9843f51601Ad9c19e3295C70");
+synthetixCurrencies.set("zXAG","0x5Ad70de6c42268Da862E0a060BfB364282D01E87");
+synthetixCurrencies.set("zWTI","0x2e4466465D77e92A1eF987b817DFEaA1fFD3cF8B");
+
+synthetixCurrencies.set("zEUR","0x49A7f0998B391b9cFf91e2DABf9673d665A30e8c");
+synthetixCurrencies.set("zJPY","0x65678dF3CAf8C72835A200291f1d7F610951F34c");
+synthetixCurrencies.set("zSPY","0x6400d8aAFb563B2d1891B4253728E3c7092B217C");
+synthetixCurrencies.set("zQQQ","0x3d3C760D884019D5ABE47a44Ee3Cc2fcEB4EcB62");
+
+synthetixCurrencies.set("zGOOGL","0x549d68153a76529E9580181F826bB717E9E8cb39");
+synthetixCurrencies.set("zAAPL","0x870D11a723de716c3D860FB1ce5f7083732FcDF3");
+synthetixCurrencies.set("zTSLA","0x914510a831c02025E82537eC8A3a570EC54F4c30");
+synthetixCurrencies.set("zCOIN","0x57E2A4adc464c6B0eA72F0df92E840d54E4E77Da");
