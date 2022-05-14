@@ -31,7 +31,8 @@ export const currencies =[
     "zGOOGL",
     "zAAPL",
     "zTSLA",
-    "zCOIN"
+    "zCOIN",
+    "zUSD"
   //   "zBTC",
   // "zETH",
   // "zBNB",
@@ -93,6 +94,8 @@ chainlinkContracts.set("zAAPL","0xb7Ed5bE7977d61E83534230f3256C021e0fae0B6");
 chainlinkContracts.set("zTSLA","0xEEA2ae9c074E87596A85ABE698B2Afebc9B57893");
 chainlinkContracts.set("zCOIN","0x2d1AB79D059e21aE519d88F978cAF39d74E31AEB");
 
+// chainlinkContracts.set("zUSD","");
+
 
 // chainlinkContracts.set("zBTC","0x264990fbd0A4796A3E3d8E37C4d5F87a3aCa5Ebf");
 // chainlinkContracts.set("zETH","0x9ef1B8c0E4F7dc8bF5719Ea496883DC6401d5b2e");
@@ -153,3 +156,5 @@ synthetixCurrencies.set("zGOOGL","0x549d68153a76529E9580181F826bB717E9E8cb39");
 synthetixCurrencies.set("zAAPL","0x870D11a723de716c3D860FB1ce5f7083732FcDF3");
 synthetixCurrencies.set("zTSLA","0x914510a831c02025E82537eC8A3a570EC54F4c30");
 synthetixCurrencies.set("zCOIN","0x57E2A4adc464c6B0eA72F0df92E840d54E4E77Da");
+
+synthetixCurrencies.set("zUSD","0xF0186490B18CB74619816CfC7FeB51cdbe4ae7b9");
